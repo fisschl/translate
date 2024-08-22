@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main>
+  <main class="p-6">
     <RouterLink to="/test">
       <ElButton> 跳转 </ElButton>
     </RouterLink>
