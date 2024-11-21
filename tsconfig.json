@@ -1,18 +1,8 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "outDir": "./dist",
-    "types": [
-      "vite/client",
-      "unplugin-icons/types/vue",
-      "unplugin-vue-router/client"
-    ]
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleResolution": "Bundler"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.vue", "*.d.ts"],
-  "exclude": ["**/assets/**", "**/public/**"]
+  "include": ["src", "test"]
 }
