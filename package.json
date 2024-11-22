@@ -4,30 +4,32 @@
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "type": "module",
   "license": "MIT",
-  "scripts": {
-    "build": "unbuild",
-    "prepack": "unbuild"
-  },
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs"
     }
   },
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "peerDependencies": {
-    "@vueuse/core": "^11.2.0",
-    "vue": "^3.4.38",
+  "scripts": {
+    "build": "unbuild",
+    "prepack": "unbuild"
+  },
+  "dependencies": {
+    "@vueuse/core": "^11.3.0",
+    "echarts": "^5.5.1",
+    "vue": "^3.5.13",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@sxzz/eslint-config": "^4.4.1",
     "@types/lodash-es": "^4.17.12",
     "lodash-es": "^4.17.21",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.3",
     "unbuild": "^2.0.0"
   }
 }
