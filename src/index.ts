@@ -1,9 +1,13 @@
 import { useRoute } from "vue-router";
 import { reactiveComputed } from "@vueuse/core";
+import { unset } from "lodash-es";
 
+/**
+ * 生成 URLSearchParams 对象
+ */
 export const toSearchParams = (
   data: object | null | undefined,
-  searchParams = new URLSearchParams(),
+  searchParams = new URLSearchParams()
 ) => {
   if (!data) return searchParams;
   for (const [key, value] of Object.entries(data)) {
@@ -27,6 +31,9 @@ export const recordQuery = (query: unknown) => {
   return result;
 };
 
+/**
+ * 从当前路由中提取所有字符串类型的查询参数。
+ */
 export const useRouteQuery = () => {
   const route = useRoute();
   return reactiveComputed(() => {
@@ -34,10 +41,9 @@ export const useRouteQuery = () => {
   });
 };
 
-export const toString = (value: unknown): string => {
-  if (value === null || value === undefined) return "";
-  if (typeof value === "string") return value;
-  if (typeof value === "function") return "";
-  if (Array.isArray(value)) return value.map(toString).join(",");
-  return String(value);
+/**
+ * 清空一个对象
+ */
+export const clearObject = <T extends object>(data: T) => {
+  Object.keys(data).forEach((key) => unset(data, key));
 };
