@@ -1,35 +1,48 @@
 {
-  "name": "charlotte",
-  "version": "0.1.0",
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+  "name": "translate",
+  "version": "0.0.0",
   "type": "module",
-  "license": "MIT",
-  "files": [
-    "dist"
-  ],
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs"
-    }
-  },
   "scripts": {
-    "build": "unbuild",
-    "prepack": "unbuild"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@vueuse/core": "^11.3.0",
-    "echarts": "^5.5.1",
-    "vue": "^3.5.13",
-    "vue-router": "^4.4.5"
+    "socket.io-client": "^4.8.1",
+    "p-limit": "^6.2.0",
+    "@vueuse/router": "^12.4.0",
+    "change-case": "^5.4.4",
+    "@tiptap/pm": "^2.11.2",
+    "@tiptap/starter-kit": "^2.11.2",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@pinia/colada": "^0.13.2",
+    "@fontsource-variable/fira-code": "^5.1.1",
+    "@fontsource-variable/noto-sans-sc": "^5.1.1",
+    "@fontsource-variable/open-sans": "^5.1.1",
+    "destr": "^2.0.3",
+    "ofetch": "^1.4.1",
+    "ohash": "^1.1.4",
+    "snabbdom": "^3.6.2",
+    "tailwindcss": "^3.4.17",
+    "@tiptap/vue-3": "^2.11.2",
+    "@vueuse/core": "^12.4.0",
+    "unplugin-vue-router": "^0.10.9",
+    "vite": "^6.0.7",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.7.3",
+    "@vueuse/integrations": "^12.4.0",
+    "pinia": "^2.3.0",
+    "lodash-es": "^4.17.21",
+    "uuid": "^11.0.5",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.1",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@sxzz/eslint-config": "^4.4.1",
+    "@vue/tsconfig": "^0.7.0",
     "@types/lodash-es": "^4.17.12",
-    "lodash-es": "^4.17.21",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.3",
-    "unbuild": "^2.0.0"
+    "@types/uuid": "^10.0.0"
   }
 }
