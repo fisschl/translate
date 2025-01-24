@@ -1,32 +1,49 @@
+import path from "node:path";
+import ui from "@nuxt/ui/vite";
+import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import AutoImport from "unplugin-auto-import/vite";
+import IconsResolver from "unplugin-icons/resolver";
+import Icons from "unplugin-icons/vite";
+import Components from "unplugin-vue-components/vite";
+import { VueRouterAutoImports } from "unplugin-vue-router";
+import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
-import cssnano from "cssnano";
-import legacy from "@vitejs/plugin-legacy";
-import tailwindcss from "tailwindcss";
-import tailwindNesting from "tailwindcss/nesting";
-import postcssPresetEnv from "postcss-preset-env";
-import react from "@vitejs/plugin-react-swc";
+import vueDevTools from "vite-plugin-vue-devtools";
 
 export default defineConfig({
   base: "/translate/",
   plugins: [
-    react(),
-    legacy({
-      modernPolyfills: true,
+    VueRouter({
+      exclude: ["**/utils/**", "**/components/**", "**/assets/**"],
     }),
+    vue(),
+    vueJsx(),
+    AutoImport({
+      imports: ["vue", VueRouterAutoImports],
+    }),
+    ui(),
+    Components({
+      deep: false,
+      resolvers: [IconsResolver()],
+    }),
+    Icons({}),
+    vueDevTools(),
   ],
-  build: {
-    cssMinify: false,
+  server: {
+    proxy: {
+      "/api/": {
+        target: "https://bronya.world",
+        changeOrigin: true,
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve("./src"),
+    },
   },
   css: {
-    devSourcemap: true,
-    transformer: "postcss",
-    postcss: {
-      plugins: [
-        tailwindNesting(),
-        tailwindcss(),
-        postcssPresetEnv(),
-        cssnano(),
-      ],
-    },
+    transformer: "lightningcss",
   },
 });
