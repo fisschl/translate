@@ -57,56 +57,64 @@ const clipboard = reactive(useClipboard());
 
 <template>
   <AppHeader class="justify-center px-2 pt-1" />
-  <URadioGroup
-    v-model="request.case"
-    orientation="horizontal"
-    class="radio-group mt-5 mb-4 px-4"
-    :items="changeCaseOptions"
-  />
-  <UForm :state="request" class="mb-5 flex gap-3 px-4" @submit="startSend">
-    <UFormField name="text">
-      <UInput
-        v-model="request.text"
-        style="min-width: 10rem"
-        size="md"
-        placeholder="请输入描述"
-      />
-    </UFormField>
-    <UButton type="submit" icon="i-tabler-sparkles"> 开始生成 </UButton>
-  </UForm>
-  <div class="flex flex-wrap gap-x-4 gap-y-3 px-4">
-    <UButton
-      v-for="item in wordsResult"
-      :key="item"
-      variant="soft"
-      class="word-result-button"
-      @click="clipboard.copy(item)"
-    >
-      {{ item }}
-      <UIcon
-        v-if="clipboard.copied && clipboard.text === item"
-        name="i-tabler-check"
-      />
-    </UButton>
-    <UIcon
-      v-if="loading"
-      name="i-tabler-loader-2"
-      style="font-size: 20px"
-      class="animate-spin"
+  <main class="mt-4 flex gap-5 px-4 pb-6">
+    <div class="flex-1">
+      <UForm
+        :state="request"
+        class="mb-4 flex justify-center gap-3"
+        @submit="startSend"
+      >
+        <UFormField name="text">
+          <UInput
+            v-model="request.text"
+            style="min-width: 10rem"
+            size="md"
+            placeholder="请输入描述"
+          />
+        </UFormField>
+        <UButton type="submit" icon="i-tabler-sparkles"> 开始生成 </UButton>
+      </UForm>
+      <div class="flex flex-wrap justify-center gap-x-4 gap-y-3">
+        <UButton
+          v-for="item in wordsResult"
+          :key="item"
+          variant="soft"
+          class="word-result-button"
+          @click="clipboard.copy(item)"
+        >
+          {{ item }}
+          <UIcon
+            v-if="clipboard.copied && clipboard.text === item"
+            name="i-tabler-check"
+          />
+        </UButton>
+        <UIcon
+          v-if="loading"
+          name="i-tabler-loader-2"
+          style="font-size: 20px"
+          class="animate-spin"
+        />
+      </div>
+    </div>
+    <URadioGroup
+      v-model="request.case"
+      class="radio-group"
+      :items="changeCaseOptions"
     />
-  </div>
+  </main>
 </template>
 
 <style scoped>
 .word-result-button {
-  font-family: "Fira Code Variable", "Noto Sans SC Variable", monospace;
+  font-family: "Fira Code Variable", monospace;
   font-size: 1rem;
 }
 
 .radio-group :deep(fieldset) {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  font-family: "Fira Code Variable", "Noto Sans SC Variable", monospace;
+  gap: 1rem;
+}
+
+.radio-group :deep(label) {
+  font-family: "Fira Code Variable", monospace;
 }
 </style>

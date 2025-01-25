@@ -2,6 +2,8 @@ import path from "node:path";
 import ui from "@nuxt/ui/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import browserslist from "browserslist";
+import { browserslistToTargets } from "lightningcss";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolver from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
@@ -43,7 +45,13 @@ export default defineConfig({
       "@": path.resolve("./src"),
     },
   },
+  build: {
+    cssMinify: "lightningcss",
+  },
   css: {
     transformer: "lightningcss",
+    lightningcss: {
+      targets: browserslistToTargets(browserslist()),
+    },
   },
 });

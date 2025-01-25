@@ -111,6 +111,7 @@ const handlePaste = async () => {
         <UButton
           square
           title="清空内容"
+          color="neutral"
           icon="i-tabler-clear-all"
           @click="clearContent"
         />
