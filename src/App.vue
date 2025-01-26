@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { debounce } from "lodash-es";
 import { ofetch } from "ofetch";
+import { watchEffect } from "vue";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 

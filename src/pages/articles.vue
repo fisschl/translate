@@ -2,11 +2,11 @@
 import StarterKit from "@tiptap/starter-kit";
 import { Editor, EditorContent } from "@tiptap/vue-3";
 import { v7 as uuid } from "uuid";
+import { onMounted, reactive, ref, shallowRef } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
-import { updateHTMLElement } from "@/utils/snabbdom";
+import HtmlContent from "@/components/HtmlContent.vue";
 import { socket } from "@/utils/socket";
 
-const articleElement = useTemplateRef<HTMLElement>("article-element");
 const loading = ref(false);
 
 const effects: (() => unknown)[] = [];
@@ -14,6 +14,8 @@ const clearEffects = () => {
   effects.forEach((fn) => fn());
   effects.length = 0;
 };
+
+const resultText = ref("");
 
 const startTranslate = async () => {
   await new Promise((resolve) => setTimeout(resolve, 60));
@@ -30,9 +32,7 @@ const startTranslate = async () => {
   const handler = (response: Record<string, any>) => {
     const { text, finished } = response;
     if (finished) loading.value = false;
-    const article = articleElement.value;
-    if (!article || !text) return;
-    updateHTMLElement(article, text);
+    resultText.value = text;
   };
   socket().on(key, handler);
   effects.push(() => socket().off(key, handler));
@@ -121,8 +121,8 @@ const handlePaste = async () => {
       </div>
     </div>
     <div class="markdown min-w-0 flex-1">
-      <article
-        ref="article-element"
+      <HtmlContent
+        :content="resultText"
         class="prose dark:prose-invert prose-code:text-base mb-2"
       />
       <UIcon

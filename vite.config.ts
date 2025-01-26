@@ -4,11 +4,6 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import browserslist from "browserslist";
 import { browserslistToTargets } from "lightningcss";
-import AutoImport from "unplugin-auto-import/vite";
-import IconsResolver from "unplugin-icons/resolver";
-import Icons from "unplugin-icons/vite";
-import Components from "unplugin-vue-components/vite";
-import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 import vueDevTools from "vite-plugin-vue-devtools";
@@ -21,15 +16,7 @@ export default defineConfig({
     }),
     vue(),
     vueJsx(),
-    AutoImport({
-      imports: ["vue", VueRouterAutoImports],
-    }),
     ui(),
-    Components({
-      deep: false,
-      resolvers: [IconsResolver()],
-    }),
-    Icons({}),
     vueDevTools(),
   ],
   server: {
