@@ -33,10 +33,7 @@ export default defineConfig({
     },
   },
   build: {
-    /**
-     * 修复 Chrome 112 兼容性问题
-     */
-    cssMinify: false,
+    cssMinify: "lightningcss",
   },
   css: {
     transformer: "lightningcss",
