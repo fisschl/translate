@@ -6,21 +6,20 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const report_visit = debounce((body: Record<string, any>) => {
+const reportVisit = debounce(() => {
   ofetch("/api/visit_log", {
     method: "POST",
-    body,
+    body: {
+      full_path: location.href,
+      ua: navigator.userAgent,
+    },
   });
 }, 500);
 
 watchEffect(() => {
+  if (!route.fullPath) return;
   if (typeof navigator === "undefined" || !navigator.userAgent) return;
-  const { fullPath } = route;
-  if (!fullPath) return;
-  report_visit({
-    full_path: fullPath,
-    ua: navigator.userAgent,
-  });
+  reportVisit();
 });
 </script>
 
