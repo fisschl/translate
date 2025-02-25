@@ -1,17 +1,18 @@
-import { sxzz } from "@sxzz/eslint-config";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+import eslintConfigPrettier from "eslint-config-prettier";
 
-export default sxzz([
-  {
-    rules: {
-      "@eslint-community/eslint-comments/no-unlimited-disable": "off",
-      "vue/no-unused-refs": "off",
-      "vue/component-name-in-template-casing": [
-        "error",
-        "PascalCase",
-        { registeredComponentsOnly: false },
-      ],
-      "vue/require-default-prop": "off",
-      "vue/multi-word-component-names": "off",
-    },
-  },
-]);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  eslintConfigPrettier,
+];
+
+export default eslintConfig;
