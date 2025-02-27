@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useCompletion } from "@ai-sdk/react";
 import { Loader2, Send, Trash2 } from "lucide-react";
+import { useMemoizedFn } from "ahooks";
 import { KeyboardEventHandler, useState } from "react";
 import pageStyle from "./page.module.css";
 
@@ -28,8 +29,28 @@ const languageOptions = [
   },
 ];
 
+const inputMatch: Record<string, (str: string) => boolean> = {
+  zh: (str: string) => {
+    const chineseRegex = /[\u4e00-\u9fa5]/g;
+    const matches = str.match(chineseRegex);
+    if (!matches) return false;
+    return matches.length / str.length > 0.8;
+  },
+  en: (str: string) => {
+    const englishRegex = /[a-zA-Z]/g;
+    const matches = str.match(englishRegex);
+    if (!matches) return false;
+    return matches.length / str.length > 0.8;
+  },
+};
+
 const Page: React.FC = () => {
   const [language, setLanguage] = useState<string>("zh");
+
+  const handlePaste = useMemoizedFn(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    handleTranslate();
+  });
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -42,10 +63,7 @@ const Page: React.FC = () => {
       },
     },
     immediatelyRender: false,
-    async onPaste() {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      handleTranslate();
-    },
+    onPaste: handlePaste,
   });
 
   const { completion, isLoading, complete } = useCompletion({
@@ -53,10 +71,20 @@ const Page: React.FC = () => {
   });
 
   const handleTranslate = async () => {
-    const text = editor?.getHTML();
+    const text = editor?.getText().trim();
     if (!text) return;
-    complete(html2Markdown(text), {
-      body: { language },
+    const body = { language };
+    if (language === "zh" && inputMatch.zh(text)) {
+      body.language = "en";
+      setLanguage("en");
+    } else if (language === "en" && inputMatch.en(text)) {
+      body.language = "zh";
+      setLanguage("zh");
+    }
+    const htmlContent = editor?.getHTML();
+    if (!htmlContent) return;
+    complete(html2Markdown(htmlContent), {
+      body,
     });
   };
 
@@ -73,7 +101,7 @@ const Page: React.FC = () => {
       <section className="min-w-0 flex-1">
         <article
           className={cn(
-            "rounded-md transition mb-3",
+            "mb-3 rounded-md transition",
             "border-gray-200 focus-within:border-blue-500",
             "dark:border-gray-500 dark:focus-within:border-blue-500",
             pageStyle.editor,
