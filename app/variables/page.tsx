@@ -93,6 +93,7 @@ const Page: React.FC = () => {
     defaultValues: {
       prompt: "",
     },
+    
   });
 
   const [changeCase, setChangeCase] = useState<string>("pascalCase");
@@ -137,6 +138,7 @@ const Page: React.FC = () => {
                   <FormControl>
                     <Input
                       placeholder="请输入描述"
+                      autoFocus
                       className="min-w-sm"
                       {...field}
                     />

@@ -1,15 +1,15 @@
 html:root {
   font-size: 16px !important;
-  font-family: var(--font-open-sans), var(--font-noto-sans-sc), sans-serif;
+  --font-sans: var(--font-open-sans), var(--font-noto-sans-sc), sans-serif;
+  --font-mono: var(--font-fira-code), var(--font-noto-sans-sc), monospace;
   overflow: hidden;
 }
 
 html body {
-  font-family: inherit;
   height: 100dvh;
   overflow: auto;
 }
 
 body code {
-  font-family: var(--font-fira-code), var(--font-noto-sans-sc), monospace;
+  font-family: var(--font-mono);
 }

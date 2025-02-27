@@ -64,6 +64,7 @@ const Page: React.FC = () => {
     },
     immediatelyRender: false,
     onPaste: handlePaste,
+    autofocus: true,
   });
 
   const { completion, isLoading, complete } = useCompletion({
