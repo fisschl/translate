@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useCompletion } from "@ai-sdk/react";
 import { Loader2, Send, Trash2 } from "lucide-react";
-import { useMemoizedFn } from "ahooks";
+import { useDebounceFn, useMemoizedFn } from "ahooks";
 import { KeyboardEventHandler, useState } from "react";
 import pageStyle from "./page.module.css";
 
@@ -47,9 +47,8 @@ const inputMatch: Record<string, (str: string) => boolean> = {
 const Page: React.FC = () => {
   const [language, setLanguage] = useState<string>("zh");
 
-  const handlePaste = useMemoizedFn(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    handleTranslate();
+  const handlePaste = useMemoizedFn(() => {
+    translateClick.run();
   });
 
   const editor = useEditor({
@@ -71,7 +70,7 @@ const Page: React.FC = () => {
     api: "/translate/api/translate",
   });
 
-  const handleTranslate = async () => {
+  const translate = async () => {
     const text = editor?.getText().trim();
     if (!text) return;
     const body = { language };
@@ -92,9 +91,9 @@ const Page: React.FC = () => {
   const handleClickEditor = () => {
     if (!editor?.isFocused) editor?.commands.focus();
   };
-
+  const translateClick = useDebounceFn(translate, { wait: 120 });
   const handleKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
-    if (event.key === "Enter") handleTranslate();
+    if (event.key === "Enter") translateClick.run();
   };
 
   return (
@@ -133,7 +132,7 @@ const Page: React.FC = () => {
           >
             <Trash2 />
           </Button>
-          <Button onClick={handleTranslate}>
+          <Button onClick={translateClick.run}>
             <Send />
             开始翻译
           </Button>
