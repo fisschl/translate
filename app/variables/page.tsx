@@ -30,6 +30,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import pageStyle from "./page.module.css";
+import { reportVisit } from "../visit";
+import { useMount } from "ahooks";
 
 const changeCaseOptions: {
   value: string;
@@ -88,12 +90,13 @@ const formSchema = z.object({
 });
 
 const Page: React.FC = () => {
+  useMount(reportVisit);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
     },
-    
   });
 
   const [changeCase, setChangeCase] = useState<string>("pascalCase");

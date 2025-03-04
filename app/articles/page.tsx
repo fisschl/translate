@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/select";
 import { useCompletion } from "@ai-sdk/react";
 import { Loader2, Send, Trash2 } from "lucide-react";
-import { useDebounceFn, useMemoizedFn } from "ahooks";
+import { useDebounceFn, useMemoizedFn, useMount } from "ahooks";
 import { KeyboardEventHandler, useState } from "react";
 import pageStyle from "./page.module.css";
+import { reportVisit } from "../visit";
 
 const languageOptions = [
   {
@@ -45,6 +46,8 @@ const inputMatch: Record<string, (str: string) => boolean> = {
 };
 
 const Page: React.FC = () => {
+  useMount(reportVisit);
+
   const [language, setLanguage] = useState<string>("zh");
 
   const handlePaste = useMemoizedFn(() => {
