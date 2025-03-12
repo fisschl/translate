@@ -1,4 +1,4 @@
-import { moonshot } from "@/app/api/moonshot";
+import { openai } from "@/app/api/openai";
 import { streamText } from "ai";
 
 const TranslatePromptChinese = `
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const language = request.language || "zh";
   const system = LanguageOptions[language] || TranslatePromptChinese;
   const result = streamText({
-    model: moonshot("kimi-latest"),
+    model: openai("gpt-4o-mini"),
     system,
     prompt: request.prompt,
   });

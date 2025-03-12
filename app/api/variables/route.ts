@@ -1,4 +1,4 @@
-import { moonshot } from "@/app/api/moonshot";
+import { openai } from "@/app/api/openai";
 import { streamText } from "ai";
 
 const NamingPrompt = `
@@ -17,7 +17,7 @@ export interface TranslateRequest {
 export async function POST(req: Request) {
   const request: TranslateRequest = await req.json();
   const result = streamText({
-    model: moonshot("kimi-latest"),
+    model: openai("gpt-4o-mini"),
     system: NamingPrompt,
     prompt: request.prompt,
   });
