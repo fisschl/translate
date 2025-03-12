@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const language = request.language || "zh";
   const system = LanguageOptions[language] || TranslatePromptChinese;
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-4o"),
     system,
     prompt: request.prompt,
   });
