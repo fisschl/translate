@@ -19,12 +19,15 @@ export interface TranslateRequest {
   prompt: string;
 }
 
+const { OPENAI_MODEL } = process.env;
+
 export async function POST(req: Request) {
   const request: TranslateRequest = await req.json();
   const language = request.language || "zh";
   const system = LanguageOptions[language] || TranslatePromptChinese;
+  if (!OPENAI_MODEL) throw new Error("OPENAI_MODEL is not set");
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: openai(OPENAI_MODEL),
     system,
     prompt: request.prompt,
   });

@@ -1,8 +1,8 @@
 import { createOpenAI } from "@ai-sdk/openai";
 
-const { OPEN_AI_API_KEY, OPEN_AI_BASE_URL } = process.env;
+const { OPENAI_API_KEY, OPENAI_PROXY_URL } = process.env;
 
 export const openai = createOpenAI({
-  apiKey: OPEN_AI_API_KEY,
-  baseURL: OPEN_AI_BASE_URL,
+  apiKey: OPENAI_API_KEY,
+  baseURL: OPENAI_PROXY_URL,
 });

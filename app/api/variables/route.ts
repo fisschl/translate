@@ -16,8 +16,10 @@ export interface TranslateRequest {
 
 export async function POST(req: Request) {
   const request: TranslateRequest = await req.json();
+  const { OPENAI_MODEL } = process.env;
+  if (!OPENAI_MODEL) throw new Error("OPENAI_MODEL is not set");
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai(OPENAI_MODEL),
     system: NamingPrompt,
     prompt: request.prompt,
   });
