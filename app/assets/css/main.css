@@ -2,5 +2,16 @@
 @import "@nuxt/ui";
 
 @theme {
-  --font-sans: "Open Sans Variable", "Noto Sans SC Variable", sans-serif;
+  --font-sans:
+    "Open Sans Variable", "Noto Sans SC Variable", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+  overflow: hidden;
+}
+
+:root body {
+  height: 100dvh;
+  overflow: auto;
 }
