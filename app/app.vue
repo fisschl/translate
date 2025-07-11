@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import "@fontsource-variable/noto-sans-sc";
-import "@fontsource-variable/open-sans";
 import "./assets/css/main.css";
 
 useHead({

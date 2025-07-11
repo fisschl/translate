@@ -42,7 +42,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
   <UContainer class="flex flex-col">
     <ol class="my-8 flex flex-1 flex-col gap-5">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
-        <template v-if="message.role === 'user'" class="">
+        <template v-if="message.role === 'user'">
           <template v-for="(part, index) in message.parts" :key="index">
             <pre
               v-if="part.type === 'text'"
@@ -52,7 +52,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
             ></pre>
           </template>
         </template>
-        <template v-else-if="message.role === 'assistant'" class="">
+        <template v-else-if="message.role === 'assistant'">
           <template v-for="(part, index) in message.parts" :key="index">
             <pre
               v-if="part.type === 'text'"
@@ -63,22 +63,22 @@ const handleKeyDown = (e: KeyboardEvent) => {
         </template>
       </li>
     </ol>
-    <UForm :state="formState" @submit="handleFormSubmit" class="pb-3">
+    <UForm :state="formState" class="pb-3" @submit="handleFormSubmit">
       <UFormField name="input" class="mb-3">
         <UTextarea
-          autofocus
           v-model="formState.input"
-          @keydown="handleKeyDown"
+          autofocus
           placeholder="请输入内容进行翻译"
           autoresize
           class="w-full"
+          @keydown="handleKeyDown"
         />
       </UFormField>
       <div class="flex items-center gap-3">
         <p class="grow"></p>
         <USwitch
-          color="secondary"
           v-model="formState.sendOnPaste"
+          color="secondary"
           label="在粘贴时发送"
           class="mx-4"
         />
