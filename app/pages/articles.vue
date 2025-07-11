@@ -17,6 +17,13 @@ const { messages, input, handleSubmit, status, setMessages } = useChat({
 onMounted(async () => {
   const messages = await storage.getItem<Message[]>(MessageStorageKey);
   if (messages) setMessages(messages);
+  await nextTick();
+  const container = document.querySelector("#__nuxt");
+  if (!container) return;
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: "instant",
+  });
 });
 
 const formState = reactive({
