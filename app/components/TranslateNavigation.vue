@@ -11,5 +11,8 @@ const items = ref<NavigationMenuItem[]>([
 </script>
 
 <template>
-  <UNavigationMenu :items="items" class="w-full justify-center py-1 backdrop-blur-lg" />
+  <UNavigationMenu
+    :items="items"
+    class="w-full justify-center bg-neutral-50/50 py-1 backdrop-blur-lg dark:bg-neutral-900/50"
+  />
 </template>
