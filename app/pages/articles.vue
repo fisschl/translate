@@ -3,7 +3,7 @@ import { useChat } from "@ai-sdk/vue";
 import type { Message } from "@ai-sdk/vue";
 import { debounce } from "lodash-es";
 
-const MessageStorageKey = "/articles/messages";
+const MessageStorageKey = "articles:messages";
 
 const { messages, input, handleSubmit, status, setMessages } = useChat({
   api: "/translate/api/chat",
