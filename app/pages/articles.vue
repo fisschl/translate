@@ -2,6 +2,7 @@
 import { useChat } from "@ai-sdk/vue";
 import type { Message } from "@ai-sdk/vue";
 import { debounce } from "lodash-es";
+import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
 
 const MessageStorageKey = "articles:messages";
 
@@ -17,13 +18,26 @@ const { messages, input, handleSubmit, status, setMessages } = useChat({
 onMounted(async () => {
   const messages = await storage.getItem<Message[]>(MessageStorageKey);
   if (messages) setMessages(messages);
-  await nextTick();
+  await new Promise((resolve) => requestIdleCallback(resolve));
+  scrollToBottom();
+});
+
+const scrollTarget = shallowRef<HTMLElement | null>(null);
+onMounted(() => {
   const container = document.querySelector("#__nuxt");
-  if (!container) return;
-  container.scrollTo({
-    top: container.scrollHeight,
-    behavior: "instant",
-  });
+  if (!(container instanceof HTMLElement)) return;
+  scrollTarget.value = container;
+});
+
+const listElement = useTemplateRef("list-element");
+
+const { scrollBottom, scrollToBottom } = useBottomScroll({
+  target: scrollTarget,
+  watchElement: listElement,
+});
+
+const isShowScrollToBottom = computed(() => {
+  return scrollBottom.value > 30;
 });
 
 const formState = reactive({
@@ -36,9 +50,11 @@ const handleFormSubmit = async (e: Event) => {
   await nextTick();
   handleSubmit(e, {
     data: {
-      system: "请将以下内容翻译成中文：",
+      system: "你是一个翻译助手，请将以下内容翻译成中文。",
     },
   });
+  await new Promise((resolve) => requestIdleCallback(resolve));
+  scrollToBottom();
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -63,25 +79,20 @@ const isSending = computed(() => status.value === "submitted" || status.value ==
 <template>
   <TranslateNavigation class="sticky top-0" />
   <UContainer class="flex flex-col">
-    <ol class="my-8 flex flex-1 flex-col gap-6">
+    <ol ref="list-element" class="my-8 flex flex-1 flex-col gap-5">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
         <template v-if="message.role === 'user'">
           <template v-for="(part, index) in message.parts" :key="index">
             <pre
               v-if="part.type === 'text'"
               class="font-sans text-sm whitespace-pre-wrap text-gray-500 dark:text-gray-400"
-              style="max-width: 80%"
               v-text="part.text"
             ></pre>
           </template>
         </template>
         <template v-else-if="message.role === 'assistant'">
           <template v-for="(part, index) in message.parts" :key="index">
-            <pre
-              v-if="part.type === 'text'"
-              class="font-sans whitespace-pre-wrap text-gray-800 dark:text-gray-100"
-              v-text="part.text"
-            ></pre>
+            <MarkdownContent v-if="part.type === 'text'" :markdown="part.text" />
           </template>
         </template>
       </li>
@@ -89,6 +100,15 @@ const isSending = computed(() => status.value === "submitted" || status.value ==
         <UIcon name="i-lucide-loader-circle" class="animate-spin" size="20" />
       </li>
     </ol>
+    <UButton
+      v-if="isShowScrollToBottom"
+      class="fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full"
+      color="secondary"
+      variant="subtle"
+      size="xl"
+      icon="i-lucide-arrow-down"
+      @click="scrollToBottom"
+    />
     <UForm :state="formState" class="pb-4" @submit="handleFormSubmit">
       <UFormField name="input" class="mb-3">
         <UTextarea

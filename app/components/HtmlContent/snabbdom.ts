@@ -11,9 +11,6 @@ import type { VNode } from "snabbdom";
 
 const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule]);
 
-const vNodeCache = new WeakMap<Element, VNode>();
-
-export const updateElement = (oldNode: Element, newNode: Element) => {
-  const result = patch(vNodeCache.get(oldNode) || oldNode, toVNode(newNode));
-  vNodeCache.set(oldNode, result);
+export const updateElement = (oldNode: Element | VNode, newNode: Element) => {
+  return patch(oldNode, toVNode(newNode));
 };

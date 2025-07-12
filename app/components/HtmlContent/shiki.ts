@@ -1,10 +1,9 @@
 import { codeToHtml } from "shiki";
-import "./shiki.css";
 import { once } from "lodash-es";
 
-const parser = once(() => new DOMParser());
+export const domParser = once(() => new DOMParser());
 
-const getLang = (codeElement: Element) => {
+const getLanguage = (codeElement: Element) => {
   const prefix = "language-";
   const lang = Array.from(codeElement.classList)
     .find((className) => className.startsWith(prefix))
@@ -12,36 +11,31 @@ const getLang = (codeElement: Element) => {
   return lang;
 };
 
-const isPreCode = (ele: HTMLElement) => {
+const highlightElement = async (ele: Element): Promise<HTMLPreElement | undefined> => {
+  if (ele.tagName !== "PRE") return;
   const child = ele.firstElementChild;
-  return ele.tagName === "PRE" && child && child.tagName === "CODE";
+  if (child?.tagName !== "CODE") return;
+  const codeStr = child.textContent?.trim();
+  if (!codeStr) return;
+  const lang = getLanguage(child);
+  if (!lang) return;
+  const html = await codeToHtml(codeStr, {
+    lang,
+    themes: {
+      light: "catppuccin-latte",
+      dark: "catppuccin-mocha",
+    },
+  });
+  const doc = domParser().parseFromString(html, "text/html");
+  return doc.querySelector("pre") || undefined;
 };
 
-export const updateHighlight = async (ele: HTMLElement) => {
-  const list: HTMLElement[] = [];
-  if (isPreCode(ele)) list.push(ele);
-  Array.from(ele.querySelectorAll("pre")).forEach((ele) => {
-    if (isPreCode(ele)) list.push(ele);
-  });
-  for (const preElement of list) {
-    const codeElement = preElement.firstElementChild!;
-    const codeStr = codeElement.textContent;
-    if (!codeStr) continue;
-    const lang = getLang(codeElement);
-    if (!lang) continue;
-    const html = await codeToHtml(codeStr, {
-      lang,
-      themes: {
-        light: "catppuccin-latte",
-        dark: "catppuccin-mocha",
-      },
-    });
-    const doc = parser().parseFromString(html, "text/html");
-    const parsedPre = doc.querySelector("pre");
-    if (!parsedPre) continue;
-    preElement.classList.add(...parsedPre.classList);
-    preElement.style.cssText = parsedPre.style.cssText;
-    preElement.tabIndex = parsedPre.tabIndex;
-    preElement.replaceChildren(...parsedPre.children);
+export const updateHighlight = async (ele: Element): Promise<Element> => {
+  const selfResult = await highlightElement(ele);
+  if (selfResult) return selfResult;
+  for (const element of ele.querySelectorAll("pre")) {
+    const result = await highlightElement(element);
+    if (result) element.replaceWith(result);
   }
+  return ele;
 };
