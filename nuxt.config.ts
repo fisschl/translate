@@ -6,11 +6,20 @@ export default defineNuxtConfig({
   ui: {
     fonts: false,
   },
-  compatibilityDate: "2025-06-27",
-  future: {
-    compatibilityVersion: 4,
-  },
   nitro: {
     preset: "bun",
+  },
+  routeRules: {
+    "/": { redirect: "/articles" },
+  },
+  vite: {
+    server: {
+      proxy: {
+        "/api": {
+          target: "http://14.103.118.144",
+          changeOrigin: true,
+        },
+      },
+    },
   },
 });

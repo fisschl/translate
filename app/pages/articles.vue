@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useChat } from "@ai-sdk/vue";
 import type { Message } from "@ai-sdk/vue";
+import { useChat } from "@ai-sdk/vue";
 import { debounce } from "lodash-es";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
 
 const MessageStorageKey = "articles:messages";
 
 const { messages, input, handleSubmit, status, setMessages } = useChat({
-  api: "/translate/api/chat",
+  api: "/api/chat/openai",
   onFinish: debounce(async () => {
     // 只存储最后24条消息
     const messagesToStore = messages.value.slice(-24);
