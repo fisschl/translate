@@ -2,7 +2,7 @@
   "name": "translate",
   "type": "module",
   "scripts": {
-    "dev": "bun --bun run nuxt dev --host",
+    "dev": "bun run nuxt dev --host",
     "build": "bun --bun run nuxt build",
     "postinstall": "nuxt prepare"
   },
