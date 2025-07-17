@@ -7,7 +7,7 @@ import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
 const MessageStorageKey = "articles:messages";
 
 const { messages, input, handleSubmit, status, setMessages } = useChat({
-  api: "/api/chat/openai",
+  api: "/translate/api/chat/openai",
   onFinish: debounce(async () => {
     // 只存储最后24条消息
     const messagesToStore = messages.value.slice(-24);
