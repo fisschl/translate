@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import { EventSourceParserStream } from "~/utils/sse";
 import { uuid } from "~~/shared/utils/uuid";
 
 const MessageStorageKey = "articles:messages";
@@ -48,7 +49,11 @@ const handleFormSubmit = async () => {
     return;
   }
 
-  const reader = body.pipeThrough(new TextDecoderStream()).getReader();
+  const reader = body
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new EventSourceParserStream())
+    .getReader();
+
   const assistantMessage = reactive<ChatMessage>({
     id: uuid(),
     role: "assistant",
@@ -66,38 +71,18 @@ const handleFormSubmit = async () => {
     assistantMessage.content += content;
   };
 
-  try {
-    while (reader) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const lines = value.split("\n\n");
-      for (const line of lines) {
-        const prefix = "data:";
-        if (!line.startsWith(prefix)) continue;
-        const content = line.slice(prefix.length).trim();
-        if (content === "[DONE]") {
-          assistantMessage.status = "success";
-          isSending.value = false;
-          // 存储消息
-          const messagesToStore = messages.slice(-24);
-          await storage.setItem(MessageStorageKey, messagesToStore);
-          await new Promise((resolve) => requestIdleCallback(resolve));
-          scrollToBottom();
-          return;
-        }
-        try {
-          const json = JSON.parse(content);
-          await handleContent(json);
-        } catch {
-          continue;
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Stream reading error:", error);
-  } finally {
-    isSending.value = false;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    await handleContent(value);
   }
+  assistantMessage.status = "success";
+  isSending.value = false;
+  // 存储消息
+  const messagesToStore = messages.slice(-24);
+  await storage.setItem(MessageStorageKey, messagesToStore);
+  await new Promise((resolve) => requestIdleCallback(resolve));
+  scrollToBottom();
 };
 
 onMounted(async () => {
