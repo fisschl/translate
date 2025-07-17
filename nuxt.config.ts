@@ -12,14 +12,4 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { redirect: "/articles" },
   },
-  vite: {
-    server: {
-      proxy: {
-        "/api": {
-          target: "http://14.103.118.144",
-          changeOrigin: true,
-        },
-      },
-    },
-  },
 });

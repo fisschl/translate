@@ -49,7 +49,7 @@ html.dark .shiki span {
 
   /* 段落样式 */
   p {
-    margin: 0.5rem 0;
+    margin: 0.75rem 0;
   }
 
   /* 链接样式 */
@@ -90,6 +90,7 @@ html.dark .shiki span {
     border-radius: 0.25rem;
     padding: 0.5rem 0.75rem;
     overflow-x: auto;
+    margin: 0.75rem 0;
   }
 
   /* 引用块样式 */
@@ -114,7 +115,7 @@ html.dark .shiki span {
   }
 
   li {
-    margin: 0;
+    margin: 0.5rem 0;
   }
 
   ul li {
@@ -130,7 +131,7 @@ html.dark .shiki span {
   ol ol,
   ul ol,
   ol ul {
-    margin: 0.5rem 0;
+    margin: 0.75rem 0;
   }
 
   /* 表格样式 */

@@ -1,23 +1,110 @@
 <script setup lang="ts">
-import type { Message } from "@ai-sdk/vue";
-import { useChat } from "@ai-sdk/vue";
-import { debounce } from "lodash-es";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import { uuid } from "~~/shared/utils/uuid";
 
 const MessageStorageKey = "articles:messages";
 
-const { messages, input, handleSubmit, status, setMessages } = useChat({
-  api: "/translate/api/chat/openai",
-  onFinish: debounce(async () => {
-    // 只存储最后24条消息
-    const messagesToStore = messages.value.slice(-24);
-    await storage.setItem(MessageStorageKey, messagesToStore);
-  }, 1000),
+interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  status: "pending" | "success";
+}
+
+const messages: ChatMessage[] = reactive([]);
+
+const formState = reactive({
+  input: "",
+  sendOnPaste: true,
 });
 
+const isSending = ref(false);
+
+const handleFormSubmit = async () => {
+  if (!formState.input.trim() || isSending.value) return;
+
+  isSending.value = true;
+  const userMessage = reactive<ChatMessage>({
+    id: uuid(),
+    role: "user",
+    content: formState.input,
+    status: "success",
+  });
+  messages.push(userMessage);
+
+  const { body } = await fetch("/translate/api/chat/doubao", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      messages: [{ role: "user", content: formState.input }],
+      thinking: { type: "disabled" },
+    }),
+  });
+
+  if (!body) {
+    isSending.value = false;
+    return;
+  }
+
+  const reader = body.pipeThrough(new TextDecoderStream()).getReader();
+  const assistantMessage = reactive<ChatMessage>({
+    id: uuid(),
+    role: "assistant",
+    content: "",
+    status: "pending",
+  });
+  messages.push(assistantMessage);
+
+  const handleContent = async (response: Record<string, any>) => {
+    const { choices } = response;
+    if (!Array.isArray(choices) || choices.length === 0) return;
+    const [{ delta }] = choices;
+    const { content } = delta;
+    if (!content) return;
+    assistantMessage.content += content;
+  };
+
+  try {
+    while (reader) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const lines = value.split("\n\n");
+      for (const line of lines) {
+        const prefix = "data:";
+        if (!line.startsWith(prefix)) continue;
+        const content = line.slice(prefix.length).trim();
+        if (content === "[DONE]") {
+          assistantMessage.status = "success";
+          isSending.value = false;
+          // 存储消息
+          const messagesToStore = messages.slice(-24);
+          await storage.setItem(MessageStorageKey, messagesToStore);
+          await new Promise((resolve) => requestIdleCallback(resolve));
+          scrollToBottom();
+          return;
+        }
+        try {
+          const json = JSON.parse(content);
+          await handleContent(json);
+        } catch {
+          continue;
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Stream reading error:", error);
+  } finally {
+    isSending.value = false;
+  }
+};
+
 onMounted(async () => {
-  const messages = await storage.getItem<Message[]>(MessageStorageKey);
-  if (messages) setMessages(messages);
+  const storedMessages = await storage.getItem<ChatMessage[]>(MessageStorageKey);
+  if (storedMessages) {
+    messages.push(...storedMessages);
+  }
   await new Promise((resolve) => requestIdleCallback(resolve));
   scrollToBottom();
 });
@@ -40,40 +127,21 @@ const isShowScrollToBottom = computed(() => {
   return scrollBottom.value > 30;
 });
 
-const formState = reactive({
-  input,
-  sendOnPaste: true,
-});
-
-const handleFormSubmit = async (e: Event) => {
-  input.value = input.value.trim();
-  await nextTick();
-  handleSubmit(e, {
-    data: {
-      system: "你是一个翻译助手，请将以下内容翻译成中文。",
-    },
-  });
-  await new Promise((resolve) => requestIdleCallback(resolve));
-  scrollToBottom();
-};
-
 const handleKeyDown = (e: KeyboardEvent) => {
   // 检测粘贴快捷键 (Ctrl+V 或 Cmd+V)
   if ((e.ctrlKey || e.metaKey) && e.key === "v" && formState.sendOnPaste) {
     setTimeout(() => {
-      handleFormSubmit(e);
+      handleFormSubmit();
     }, 60);
     return;
   }
   // 检测回车键发送
   if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.altKey) {
     e.preventDefault();
-    handleFormSubmit(e);
+    handleFormSubmit();
     return;
   }
 };
-
-const isSending = computed(() => status.value === "submitted" || status.value === "streaming");
 </script>
 
 <template>
@@ -82,22 +150,20 @@ const isSending = computed(() => status.value === "submitted" || status.value ==
     <ol ref="list-element" class="my-8 flex flex-1 flex-col gap-5">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
         <template v-if="message.role === 'user'">
-          <template v-for="(part, index) in message.parts" :key="index">
-            <pre
-              v-if="part.type === 'text'"
-              class="font-sans text-sm whitespace-pre-wrap text-gray-500 dark:text-gray-400"
-              v-text="part.text"
-            ></pre>
-          </template>
+          <pre
+            class="font-sans text-sm whitespace-pre-wrap text-gray-500 dark:text-gray-400"
+            v-text="message.content"
+          ></pre>
         </template>
         <template v-else-if="message.role === 'assistant'">
-          <template v-for="(part, index) in message.parts" :key="index">
-            <MarkdownContent v-if="part.type === 'text'" :markdown="part.text" />
-          </template>
+          <MarkdownContent :markdown="message.content" />
+          <UIcon
+            v-if="message.status === 'pending'"
+            name="i-lucide-loader-circle"
+            class="animate-spin"
+            size="20"
+          />
         </template>
-      </li>
-      <li v-if="isSending">
-        <UIcon name="i-lucide-loader-circle" class="animate-spin" size="20" />
       </li>
     </ol>
     <UButton
