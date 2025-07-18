@@ -37,6 +37,8 @@
     "p-limit": "^6.2.0",
     "pinia": "^3.0.3",
     "rehype-katex": "^7.0.1",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
     "rehype-stringify": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",

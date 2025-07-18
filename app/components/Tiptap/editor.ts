@@ -1,8 +1,11 @@
 import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
-import { renderToMarkdown } from "@tiptap/static-renderer";
 import type { Extension } from "@tiptap/vue-3";
 import { Editor } from "@tiptap/vue-3";
+import rehypeParse from "rehype-parse";
+import rehypeRemark from "rehype-remark";
+import remarkStringify from "remark-stringify";
+import { unified } from "unified";
 
 export const useTiptapEditor = (options?: {
   content?: string;
@@ -57,13 +60,15 @@ export const useTiptapEditor = (options?: {
     editor.value?.destroy();
   });
 
-  const markdownContent = () => {
-    const json = editor.value?.getJSON();
-    if (!json) return "";
-    return renderToMarkdown({
-      extensions: extensions.value,
-      content: json,
-    });
+  const markdownContent = async () => {
+    const html = editor.value?.getHTML();
+    if (!html) return "";
+    const markdown = await unified()
+      .use(rehypeParse)
+      .use(rehypeRemark)
+      .use(remarkStringify)
+      .process(html);
+    return markdown.toString().trim();
   };
 
   return {

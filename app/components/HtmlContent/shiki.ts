@@ -19,15 +19,20 @@ const highlightElement = async (ele: Element): Promise<HTMLPreElement | undefine
   if (!codeStr) return;
   const lang = getLanguage(child);
   if (!lang) return;
-  const html = await codeToHtml(codeStr, {
-    lang,
-    themes: {
-      light: "catppuccin-latte",
-      dark: "catppuccin-mocha",
-    },
-  });
-  const doc = domParser().parseFromString(html, "text/html");
-  return doc.querySelector("pre") || undefined;
+  try {
+    const html = await codeToHtml(codeStr, {
+      lang,
+      themes: {
+        light: "catppuccin-latte",
+        dark: "catppuccin-mocha",
+      },
+    });
+    const doc = domParser().parseFromString(html, "text/html");
+    return doc.querySelector("pre") || undefined;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 };
 
 export const updateHighlight = async (ele: Element): Promise<Element> => {

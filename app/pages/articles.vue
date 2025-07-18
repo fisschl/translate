@@ -25,12 +25,12 @@ const systemMessages = () => {
     {
       role: "system",
       content:
-        "你是一个翻译助手，请将用户输入的内容翻译成中文。用户输入是markdown格式的文本，直接返回markdown格式的中文翻译。",
+        "你是一个翻译助手，你的工作是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：\n\n1. 你提供的译文需要带有格式，包括标题、列表、代码块等。\n2. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释。\n3. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
     },
     {
       role: "user",
       content:
-        "# Hello World\n\nThis is a **bold** text with *italic* formatting.\n\n- List item 1\n- List item 2\n\n```javascript\nconsole.log('Hello');\n```",
+        "# Hello World\n\nThis is a **bold** text with *italic* formatting.\n\n- List item 1\n- List item 2\n\n```\nconsole.log('Hello');\n```",
     },
     {
       role: "assistant",
@@ -41,7 +41,7 @@ const systemMessages = () => {
 };
 
 const handleFormSubmit = async () => {
-  const input = markdownContent().trim();
+  const input = await markdownContent();
   if (!input || isSending.value) return;
 
   const historyMessages = messages.map((message) => {
