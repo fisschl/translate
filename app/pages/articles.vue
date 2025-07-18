@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pick } from "lodash-es";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
 import { EventSourceParserStream } from "~/utils/sse";
 import { uuid } from "~~/shared/utils/uuid";
@@ -44,6 +45,10 @@ const systemMessages = () => {
 const handleFormSubmit = async () => {
   if (!formState.input.trim() || isSending.value) return;
 
+  const historyMessages = messages.map((message) => {
+    return pick(message, ["role", "content"]);
+  });
+
   isSending.value = true;
   const userMessage = reactive<ChatMessage>({
     id: uuid(),
@@ -52,6 +57,7 @@ const handleFormSubmit = async () => {
     status: "success",
   });
   messages.push(userMessage);
+  formState.input = "";
 
   const { body } = await fetch("/translate/api/chat/doubao", {
     method: "POST",
@@ -59,7 +65,11 @@ const handleFormSubmit = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      messages: [...systemMessages(), { role: "user", content: formState.input }],
+      messages: [
+        ...systemMessages(),
+        ...historyMessages,
+        { role: "user", content: userMessage.content },
+      ],
       thinking: { type: "disabled" },
     }),
   });
