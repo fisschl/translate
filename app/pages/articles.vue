@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { pick } from "lodash-es";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import ScrollBottomButton from "~/components/ScrollBottomButton.vue";
 import { useTiptapEditor } from "~/components/Tiptap/editor";
 import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
 import { EventSourceParserStream } from "~/utils/sse";
@@ -165,13 +166,9 @@ const { editor, markdownContent } = useTiptapEditor({
         </template>
       </li>
     </ol>
-    <UButton
-      v-if="isShowScrollToBottom"
-      class="fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full"
-      color="secondary"
-      variant="subtle"
-      size="xl"
-      icon="i-lucide-arrow-down"
+    <ScrollBottomButton
+      :is-show="isShowScrollToBottom"
+      class="fixed bottom-10 left-1/2 -translate-x-1/2"
       @click="scrollToBottom"
     />
     <section class="pb-4">
