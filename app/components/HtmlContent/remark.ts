@@ -1,13 +1,13 @@
+import "katex/dist/katex.min.css";
+import rehypeKatex from "rehype-katex";
+import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
-import { unified } from "unified";
-import remarkMath from "remark-math";
-import rehypeStringify from "rehype-stringify";
-import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css";
-import { domParser, updateHighlight } from "./shiki";
 import type { VNode } from "snabbdom";
+import { unified } from "unified";
+import { domParser, updateHighlight } from "./shiki";
 
 export const markdownToHtml = async (markdown: string) => {
   const result = await unified()

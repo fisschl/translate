@@ -1,5 +1,5 @@
-import { codeToHtml } from "shiki";
 import { once } from "lodash-es";
+import { codeToHtml } from "shiki";
 
 export const domParser = once(() => new DOMParser());
 

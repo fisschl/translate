@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { pick } from "lodash-es";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import { useTiptapEditor } from "~/components/Tiptap/editor";
+import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
 import { EventSourceParserStream } from "~/utils/sse";
 import { uuid } from "~~/shared/utils/uuid";
 
@@ -14,11 +16,7 @@ interface ChatMessage {
 }
 
 const messages: ChatMessage[] = reactive([]);
-
-const formState = reactive({
-  input: "",
-  sendOnPaste: true,
-});
+const sendOnPaste = ref(true);
 
 const isSending = ref(false);
 
@@ -43,7 +41,8 @@ const systemMessages = () => {
 };
 
 const handleFormSubmit = async () => {
-  if (!formState.input.trim() || isSending.value) return;
+  const input = markdownContent().trim();
+  if (!input || isSending.value) return;
 
   const historyMessages = messages.map((message) => {
     return pick(message, ["role", "content"]);
@@ -53,11 +52,11 @@ const handleFormSubmit = async () => {
   const userMessage = reactive<ChatMessage>({
     id: uuid(),
     role: "user",
-    content: formState.input,
+    content: input,
     status: "success",
   });
   messages.push(userMessage);
-  formState.input = "";
+  editor.value?.commands.setContent("");
 
   const { body } = await fetch("/translate/api/chat/doubao", {
     method: "POST",
@@ -109,17 +108,16 @@ const handleFormSubmit = async () => {
   assistantMessage.status = "success";
   isSending.value = false;
   // 存储消息
-  const messagesToStore = messages.slice(-24);
+  const messagesToStore = messages.slice(-8);
   await storage.setItem(MessageStorageKey, messagesToStore);
 };
 
 onMounted(async () => {
   const storedMessages = await storage.getItem<ChatMessage[]>(MessageStorageKey);
-  if (storedMessages) {
-    messages.push(...storedMessages);
-  }
-  await new Promise((resolve) => requestIdleCallback(resolve));
-  scrollToBottom();
+  if (storedMessages) messages.push(...storedMessages);
+  const interval = setInterval(() => scrollToBottom(), 100);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  clearInterval(interval);
 });
 
 const scrollTarget = shallowRef<HTMLElement | null>(null);
@@ -140,42 +138,30 @@ const isShowScrollToBottom = computed(() => {
   return scrollBottom.value > 30;
 });
 
-const handleKeyDown = (e: KeyboardEvent) => {
-  // 检测粘贴快捷键 (Ctrl+V 或 Cmd+V)
-  if ((e.ctrlKey || e.metaKey) && e.key === "v" && formState.sendOnPaste) {
-    setTimeout(() => {
-      handleFormSubmit();
-    }, 60);
-    return;
-  }
-  // 检测回车键发送
-  if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-    e.preventDefault();
+const { editor, markdownContent } = useTiptapEditor({
+  onEnter: () => {
     handleFormSubmit();
-    return;
-  }
-};
+    return true;
+  },
+  onPaste: () => {
+    if (!sendOnPaste.value) return;
+    setTimeout(() => handleFormSubmit(), 100);
+  },
+  autofocus: true,
+  placeholder: "请输入内容进行翻译",
+});
 </script>
 
 <template>
   <TranslateNavigation class="sticky top-0" />
   <UContainer class="flex flex-col">
-    <ol ref="list-element" class="my-8 flex flex-1 flex-col gap-5">
+    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-4">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
         <template v-if="message.role === 'user'">
-          <pre
-            class="font-sans text-sm whitespace-pre-wrap text-gray-500 dark:text-gray-400"
-            v-text="message.content"
-          ></pre>
+          <MarkdownContent size="sm" :markdown="message.content" />
         </template>
         <template v-else-if="message.role === 'assistant'">
           <MarkdownContent :markdown="message.content" />
-          <UIcon
-            v-if="message.status === 'pending'"
-            name="i-lucide-loader-circle"
-            class="animate-spin"
-            size="20"
-          />
         </template>
       </li>
     </ol>
@@ -188,30 +174,22 @@ const handleKeyDown = (e: KeyboardEvent) => {
       icon="i-lucide-arrow-down"
       @click="scrollToBottom"
     />
-    <UForm :state="formState" class="pb-4" @submit="handleFormSubmit">
-      <UFormField name="input" class="mb-3">
-        <UTextarea
-          v-model="formState.input"
-          autofocus
-          placeholder="请输入内容进行翻译"
-          autoresize
-          class="w-full"
-          @keydown="handleKeyDown"
-        />
-      </UFormField>
+    <section class="pb-4">
+      <TiptapEditorContent :editor="editor" class="mb-3" />
       <div class="flex items-center gap-3">
         <p class="grow"></p>
-        <USwitch
-          v-model="formState.sendOnPaste"
-          color="secondary"
-          label="在粘贴时发送"
-          class="mx-4"
-        />
-        <UButton type="submit" icon="i-lucide-rocket" class="px-4" :loading="isSending">
+        <USwitch v-model="sendOnPaste" color="secondary" label="在粘贴时发送" class="mx-4" />
+        <UButton
+          type="button"
+          icon="i-lucide-rocket"
+          class="px-4"
+          :loading="isSending"
+          @click="handleFormSubmit"
+        >
           发送
         </UButton>
       </div>
-    </UForm>
+    </section>
   </UContainer>
 </template>
 

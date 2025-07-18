@@ -1,3 +1,4 @@
+import type { VNode } from "snabbdom";
 import {
   attributesModule,
   classModule,
@@ -7,7 +8,6 @@ import {
   styleModule,
   toVNode,
 } from "snabbdom";
-import type { VNode } from "snabbdom";
 
 const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule]);
 

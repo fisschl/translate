@@ -12,4 +12,5 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { redirect: "/articles" },
   },
+  compatibilityDate: "2025-07-18",
 });
