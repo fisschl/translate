@@ -21,6 +21,26 @@ const formState = reactive({
 
 const isSending = ref(false);
 
+const systemMessages = () => {
+  return [
+    {
+      role: "system",
+      content:
+        "你是一个翻译助手，请将用户输入的内容翻译成中文。用户输入是markdown格式的文本，直接返回markdown格式的中文翻译。",
+    },
+    {
+      role: "user",
+      content:
+        "# Hello World\n\nThis is a **bold** text with *italic* formatting.\n\n- List item 1\n- List item 2\n\n```javascript\nconsole.log('Hello');\n```",
+    },
+    {
+      role: "assistant",
+      content:
+        "# 你好世界\n\n这是一个**粗体**文本，带有*斜体*格式。\n\n- 列表项 1\n- 列表项 2\n\n```javascript\nconsole.log('Hello');\n```",
+    },
+  ];
+};
+
 const handleFormSubmit = async () => {
   if (!formState.input.trim() || isSending.value) return;
 
@@ -39,7 +59,7 @@ const handleFormSubmit = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      messages: [{ role: "user", content: formState.input }],
+      messages: [...systemMessages(), { role: "user", content: formState.input }],
       thinking: { type: "disabled" },
     }),
   });
@@ -81,8 +101,6 @@ const handleFormSubmit = async () => {
   // 存储消息
   const messagesToStore = messages.slice(-24);
   await storage.setItem(MessageStorageKey, messagesToStore);
-  await new Promise((resolve) => requestIdleCallback(resolve));
-  scrollToBottom();
 };
 
 onMounted(async () => {
