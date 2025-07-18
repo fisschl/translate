@@ -18,6 +18,7 @@ defineProps<{
 .editor-content {
   border-width: 2px;
   border-style: dashed;
+  min-height: 3rem;
 }
 
 .editor-content :deep(.tiptap) {
