@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import "@fontsource-variable/fira-code";
 import pLimit from "p-limit";
-import { updateMarkdownContainer } from "./remark";
+import { MarkdownHandler } from "./remark";
 
 const props = defineProps<{
   markdown: string;
@@ -10,17 +10,18 @@ const props = defineProps<{
 
 const limit = pLimit(1);
 const container = useTemplateRef("container-element");
-const content = computed(() => {
+
+const handler = shallowRef<MarkdownHandler | null>(null);
+onMounted(() => {
   if (!container.value) return;
-  return props.markdown;
+  handler.value = new MarkdownHandler({ container: container.value });
 });
 
-watch(content, (value) => {
-  if (!value) return;
+watchEffect(() => {
+  if (!handler.value) return;
+  const content = props.markdown;
   limit(async () => {
-    const ele = container.value;
-    if (!ele) return;
-    await updateMarkdownContainer(ele, value);
+    await handler.value?.update(content);
   });
 });
 </script>

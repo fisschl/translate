@@ -1,15 +1,48 @@
 import "katex/dist/katex.min.css";
+import { once } from "lodash-es";
 import rehypeKatex from "rehype-katex";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
+import { codeToHtml } from "shiki";
 import type { VNode } from "snabbdom";
 import { unified } from "unified";
-import { domParser, updateHighlight } from "./shiki";
 
-export const markdownToHtml = async (markdown: string) => {
+export const domParser = once(() => new DOMParser());
+
+const highlight = async (options: {
+  code: string;
+  lang: string;
+}): Promise<HTMLPreElement | undefined> => {
+  try {
+    const html = await codeToHtml(options.code, {
+      lang: options.lang,
+      themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
+    });
+    const doc = domParser().parseFromString(html, "text/html");
+    return doc.querySelector("pre") || undefined;
+  } catch {
+    return;
+  }
+};
+
+const handlePreElement = async (ele: Element): Promise<HTMLPreElement | undefined> => {
+  if (ele.tagName !== "PRE") return;
+  const child = ele.firstElementChild;
+  if (child?.tagName !== "CODE") return;
+  const codeStr = child.textContent?.trim();
+  if (!codeStr) return;
+  const prefix = "language-";
+  const lang = Array.from(child.classList)
+    .find((className) => className.startsWith(prefix))
+    ?.slice(prefix.length);
+  if (!lang || lang === "null" || lang === "undefined") return;
+  return highlight({ code: codeStr, lang });
+};
+
+export const markdownToElement = async (markdown: string) => {
   const result = await unified()
     .use(remarkParse)
     .use(remarkMath)
@@ -22,41 +55,49 @@ export const markdownToHtml = async (markdown: string) => {
   return Array.from(doc.body.children);
 };
 
-const vNodeCache = new WeakMap<Element, (VNode | undefined)[]>();
+export class MarkdownHandler {
+  private container: HTMLElement;
 
-const isNodeEqual = (left?: Element, right?: Element) => {
-  if (!left || !right) return false;
-  return left.outerHTML === right.outerHTML;
-};
-
-export const updateMarkdownContainer = async (container: HTMLElement, markdown: string) => {
-  const leftList = Array.from(container.children);
-  const rightList = await markdownToHtml(markdown);
-  const length = Math.max(leftList.length, rightList.length);
-  const { updateElement } = await import("./snabbdom");
-  const vNodeList = vNodeCache.get(container) || [];
-  for (let i = 0; i < length; i++) {
-    const leftNode = leftList[i];
-    let rightNode = rightList[i];
-    if (isNodeEqual(leftNode, rightNode)) continue;
-    if (!rightNode) {
-      leftNode?.remove();
-      vNodeList[i] = undefined;
-      continue;
-    }
-    rightNode = await updateHighlight(rightNode);
-    if (!leftNode) {
-      const emptyNode = document.createElement(rightNode.tagName);
-      container.appendChild(emptyNode);
-      vNodeList[i] = updateElement(emptyNode, rightNode);
-      continue;
-    }
-    const vNode = vNodeList[i];
-    if (!vNode) {
-      leftNode.remove();
-      continue;
-    }
-    vNodeList[i] = updateElement(vNode, rightNode);
+  constructor(options: { container: HTMLElement }) {
+    this.container = options.container;
   }
-  vNodeCache.set(container, vNodeList);
-};
+
+  vNodeCache: (VNode | undefined)[] = [];
+  htmlCache: (string | undefined)[] = [];
+
+  async handleElement(element: Element) {
+    return (await handlePreElement(element)) || element;
+  }
+
+  async update(content: string) {
+    const leftList = Array.from(this.container.children);
+    const rightList = await markdownToElement(content);
+    const length = Math.max(leftList.length, rightList.length);
+    const { updateElement } = await import("./snabbdom");
+    for (let i = 0; i < length; i++) {
+      const leftNode = leftList[i];
+      const rightNode = rightList[i];
+      if (!rightNode) {
+        leftNode?.remove();
+        this.vNodeCache[i] = undefined;
+        this.htmlCache[i] = undefined;
+        continue;
+      }
+      if (leftNode && this.htmlCache[i] === rightNode.outerHTML) continue;
+      this.htmlCache[i] = rightNode.outerHTML;
+      const willUpdate = await this.handleElement(rightNode);
+      if (!leftNode) {
+        const emptyNode = document.createElement(willUpdate.tagName);
+        this.container.appendChild(emptyNode);
+        this.vNodeCache[i] = updateElement(emptyNode, willUpdate);
+        continue;
+      }
+      const vNode = this.vNodeCache[i];
+      if (!vNode) {
+        leftNode.remove();
+        continue;
+      }
+      this.vNodeCache[i] = updateElement(vNode, willUpdate);
+    }
+  }
+}
