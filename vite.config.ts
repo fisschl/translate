@@ -50,12 +50,4 @@ export default defineConfig({
       targets: browserslistToTargets(browserslist()),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://bronya.world",
-        changeOrigin: true,
-      },
-    },
-  },
 });
