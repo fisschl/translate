@@ -11,13 +11,13 @@ const handleClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <UButton
-    v-if="isShow"
-    class="rounded-full backdrop-blur"
-    color="secondary"
-    variant="subtle"
-    size="xl"
-    icon="i-lucide-arrow-down"
-    @click="handleClick"
-  />
+  <ElButton v-if="isShow" class="scroll-button backdrop-blur" round @click="handleClick">
+    <ILucideArrowDown class="text-base" />
+  </ElButton>
 </template>
+
+<style scoped>
+.scroll-button {
+  --el-button-bg-color: light-dark(#fefefe2f, #2121215b);
+}
+</style>

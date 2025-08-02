@@ -122,14 +122,14 @@ storage
     messages.push(...storedMessages);
   })
   .then(async () => {
-    const interval = setInterval(() => scrollToBottom(), 100);
+    const interval = setInterval(() => scrollToBottom(), 60);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     clearInterval(interval);
   });
 
 const scrollTarget = shallowRef<HTMLElement | null>(null);
 onMounted(() => {
-  const container = document.querySelector("#__nuxt");
+  const container = document.querySelector("#app");
   if (!(container instanceof HTMLElement)) return;
   scrollTarget.value = container;
 });
@@ -160,12 +160,12 @@ const { editor, markdownContent } = useTiptapEditor({
 </script>
 
 <template>
-  <TranslateNavigation class="sticky top-0" />
-  <UContainer class="flex flex-col">
-    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-4">
+  <TranslateNavigation />
+  <section class="flex flex-col px-6">
+    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-8">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
         <template v-if="message.role === 'user'">
-          <MarkdownContent size="sm" :markdown="message.content" />
+          <pre class="text-sm whitespace-pre-wrap" v-text="message.content" />
         </template>
         <template v-else-if="message.role === 'assistant'">
           <MarkdownContent :markdown="message.content" />
@@ -179,21 +179,21 @@ const { editor, markdownContent } = useTiptapEditor({
     />
     <section class="pb-4">
       <TiptapEditorContent :editor="editor" class="mb-3" />
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-4">
         <p class="grow" />
-        <USwitch v-model="sendOnPaste" color="secondary" label="在粘贴时发送" class="mx-4" />
-        <UButton
-          type="button"
-          icon="i-lucide-rocket"
-          class="px-4"
+        <ElCheckbox v-model="sendOnPaste" label="在粘贴时发送" />
+        <ElButton
+          type="primary"
+          native-type="button"
           :loading="isSending"
           @click="handleFormSubmit"
         >
+          <ILucideRocket class="mr-2 text-base" />
           发送
-        </UButton>
+        </ElButton>
       </div>
     </section>
-  </UContainer>
+  </section>
 </template>
 
 <style scoped></style>

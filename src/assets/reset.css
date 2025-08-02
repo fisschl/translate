@@ -1,13 +1,3 @@
-:root {
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
-}
-
 html:root {
   --el-font-family: var(--font-sans);
 }

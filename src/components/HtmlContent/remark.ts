@@ -21,10 +21,6 @@ import "katex/dist/katex.min.css";
 
 const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule]);
 
-export const updateElement = (oldNode: Element | VNode, newNode: Element) => {
-  return patch(oldNode, toVNode(newNode));
-};
-
 export const domParser = once(() => new DOMParser());
 
 const highlight = async (options: {
@@ -35,6 +31,7 @@ const highlight = async (options: {
     const html = await codeToHtml(options.code, {
       lang: options.lang,
       themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
+      defaultColor: "light-dark()",
     });
     const doc = domParser().parseFromString(html, "text/html");
     return doc.querySelector("pre") || undefined;
@@ -70,48 +67,27 @@ export const markdownToElement = async (markdown: string) => {
   return Array.from(doc.body.children);
 };
 
-export class MarkdownHandler {
-  private container: HTMLElement;
+const elementCache = new WeakMap<Element, VNode>();
 
-  constructor(options: { container: HTMLElement }) {
-    this.container = options.container;
-  }
+export const updateElement = (oldNode: Element, newNode: Element) => {
+  const vNode = elementCache.get(oldNode);
+  const result = vNode ? patch(vNode, toVNode(newNode)) : toVNode(newNode);
+  elementCache.set(oldNode, result);
+  return result;
+};
 
-  vNodeCache: (VNode | undefined)[] = [];
-  htmlCache: (string | undefined)[] = [];
-
-  async handleElement(element: Element) {
-    return (await handlePreElement(element)) || element;
-  }
-
-  async update(content: string) {
-    const leftList = Array.from(this.container.children);
-    const rightList = await markdownToElement(content);
-    const length = Math.max(leftList.length, rightList.length);
-    for (let i = 0; i < length; i++) {
-      const leftNode = leftList[i];
-      const rightNode = rightList[i];
-      if (!rightNode) {
-        leftNode?.remove();
-        this.vNodeCache[i] = undefined;
-        this.htmlCache[i] = undefined;
-        continue;
-      }
-      if (leftNode && this.htmlCache[i] === rightNode.outerHTML) continue;
-      this.htmlCache[i] = rightNode.outerHTML;
-      const willUpdate = await this.handleElement(rightNode);
-      if (!leftNode) {
-        const emptyNode = document.createElement(willUpdate.tagName);
-        this.container.append(emptyNode);
-        this.vNodeCache[i] = updateElement(emptyNode, willUpdate);
-        continue;
-      }
-      const vNode = this.vNodeCache[i];
-      if (!vNode) {
-        leftNode.remove();
-        continue;
-      }
-      this.vNodeCache[i] = updateElement(vNode, willUpdate);
+export const appendMarkdown = async (element: HTMLElement, markdown: string) => {
+  const elements = await markdownToElement(markdown);
+  const article = document.createElement("article");
+  article.classList.add("prose", "dark:prose-invert", "max-w-none");
+  article.append(...elements);
+  for (const element of article.children) {
+    if (element.tagName === "PRE") {
+      const pre = await handlePreElement(element);
+      if (pre) element.replaceWith(pre);
     }
   }
-}
+  const oldArticle = element.querySelector("article");
+  if (oldArticle) updateElement(oldArticle, article);
+  else element.append(article);
+};

@@ -40,14 +40,8 @@ const defaultActive = computed(() => {
 <style scoped>
 .translate-navigation {
   --el-menu-horizontal-height: 3rem;
-  --el-menu-bg-color: #ffffffb5;
+  --el-menu-bg-color: light-dark(#ffffffb5, #1c1c1c56);
   position: sticky;
   top: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .translate-navigation {
-    --el-menu-bg-color: #1c1c1c56;
-  }
 }
 </style>

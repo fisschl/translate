@@ -3,5 +3,5 @@
 
 @theme {
   --font-sans: "MiSans", system-ui;
-  --font-mono: "Fira Code Variable", monospace;
+  --font-mono: "Fira Code Variable", "MiSans", monospace;
 }
