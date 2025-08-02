@@ -7,6 +7,7 @@ import remarkRehype from "remark-rehype";
 import remarkStringify from "remark-stringify";
 import { codeToHtml } from "shiki";
 import { unified } from "unified";
+import { h, type VNode } from "vue";
 import type { Root } from "mdast";
 import "katex/dist/katex.min.css";
 
@@ -73,10 +74,15 @@ export const markdownToElement = async (markdown: string) => {
 export function domToVNode(dom: Node): VNode | null | string {
   if (dom.nodeType === Node.TEXT_NODE) return dom.textContent || null;
   if (!(dom instanceof Element)) return null;
+
   const props: Record<string, string> = {};
   Array.from(dom.attributes).forEach((attr) => {
     props[attr.name] = attr.value;
   });
-  const children = Array.from(dom.childNodes).map((child) => domToVNode(child));
+
+  const children = Array.from(dom.childNodes)
+    .map((child) => domToVNode(child))
+    .filter((child) => child !== null);
+
   return h(dom.tagName.toLowerCase(), props, children);
 }
