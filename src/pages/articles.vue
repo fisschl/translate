@@ -61,7 +61,7 @@ const handleFormSubmit = async () => {
   messages.push(userMessage);
   editor.value?.commands.setContent("");
 
-  const { body } = await fetch("https://bronya.world/api/doubao/chat", {
+  const { body } = await fetch("/api/doubao/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
