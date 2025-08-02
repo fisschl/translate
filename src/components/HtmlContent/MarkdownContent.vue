@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { appendMarkdown } from "./remark";
+import { toVNode, type VNode } from "snabbdom";
+import { markdownToElement, patch } from "./remark";
 import "@fontsource-variable/fira-code";
 
 const props = defineProps<{
@@ -8,12 +9,26 @@ const props = defineProps<{
 
 const container = useTemplateRef("container-element");
 
+const lastVNode = shallowRef<VNode | null>(null);
+
 watchEffect(() => {
   if (!container.value) return;
   const { markdown } = props;
   const element = container.value;
   if (!element) return;
-  appendMarkdown(element, markdown);
+  markdownToElement(markdown).then(async (elements) => {
+    await nextTick();
+    const article = document.createElement("article");
+    article.classList.add("prose", "dark:prose-invert", "max-w-none");
+    article.append(...elements);
+    if (lastVNode.value) {
+      lastVNode.value = patch(lastVNode.value, toVNode(article));
+      return;
+    }
+    const placeholder = document.createElement("article");
+    element.append(placeholder);
+    lastVNode.value = patch(placeholder, toVNode(article));
+  });
 });
 </script>
 
