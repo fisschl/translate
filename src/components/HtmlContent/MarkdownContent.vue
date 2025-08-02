@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { toVNode, type VNode } from "snabbdom";
-import { markdownToElement, patch } from "./remark";
+import {
+  attributesModule,
+  classModule,
+  datasetModule,
+  init,
+  propsModule,
+  styleModule,
+  toVNode,
+  type VNode,
+} from "snabbdom";
+import { markdownToElement } from "./remark";
 import "@fontsource-variable/fira-code";
 
 const props = defineProps<{
   markdown: string;
 }>();
+const patch = init([classModule, propsModule, attributesModule, datasetModule, styleModule]);
 
 const container = useTemplateRef("container-element");
 
