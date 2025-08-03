@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Editor, type Extension } from "@tiptap/vue-3";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
+import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
 import { unified } from "unified";
 
@@ -65,6 +66,7 @@ export const useTiptapEditor = (options?: {
     const markdown = await unified()
       .use(rehypeParse)
       .use(rehypeRemark)
+      .use(remarkGfm)
       .use(remarkStringify)
       .process(html);
     return markdown.toString().trim();
