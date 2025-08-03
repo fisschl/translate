@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import { EditorContent } from "@tiptap/vue-3";
+import { EditorContent, type Editor } from "@tiptap/vue-3";
 
 defineProps<{
   editor?: Editor;

@@ -157,6 +157,11 @@ const { editor, markdownContent } = useTiptapEditor({
   autofocus: true,
   placeholder: "请输入内容进行翻译",
 });
+
+const handleClickScrollToBottom = () => {
+  scrollToBottom();
+  editor.value?.commands.focus();
+};
 </script>
 
 <template>
@@ -175,7 +180,7 @@ const { editor, markdownContent } = useTiptapEditor({
     <ScrollBottomButton
       :is-show="isShowScrollToBottom"
       class="fixed bottom-10 left-1/2 -translate-x-1/2"
-      @click="scrollToBottom"
+      @click="handleClickScrollToBottom"
     />
     <section class="pb-4">
       <TiptapEditorContent :editor="editor" class="mb-3" />

@@ -25,20 +25,27 @@ export function splitMarkdown(markdownText: string): string[] {
   });
 }
 
-const highlight = async (options: {
-  code: string;
-  lang: string;
-}): Promise<HTMLPreElement | undefined> => {
+const handleCode = async (ele: Element) => {
+  if (ele.tagName !== "PRE") return ele;
+  const child = ele.firstElementChild;
+  if (child?.tagName !== "CODE") return ele;
+  const codeStr = child.textContent?.trim();
+  if (!codeStr) return ele;
+  const prefix = "language-";
+  const lang = Array.from(child.classList)
+    .find((className) => className.startsWith(prefix))
+    ?.slice(prefix.length);
+  if (!lang || lang === "null" || lang === "undefined") return ele;
   try {
-    const html = await codeToHtml(options.code, {
-      lang: options.lang,
+    const html = await codeToHtml(codeStr, {
+      lang,
       themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
       defaultColor: "light-dark()",
     });
     const doc = domParser.parseFromString(html, "text/html");
-    return doc.querySelector("pre") || undefined;
+    return doc.querySelector("pre") || ele;
   } catch {
-    return;
+    return ele;
   }
 };
 
@@ -53,25 +60,14 @@ export const markdownToElement = async (markdown: string) => {
     .process(markdown);
   const doc = domParser.parseFromString(result.toString(), "text/html");
   const elements = Array.from(doc.body.children).map(async (ele) => {
-    if (ele.tagName === "PRE") {
-      const child = ele.firstElementChild;
-      if (child?.tagName !== "CODE") return ele;
-      const codeStr = child.textContent?.trim();
-      if (!codeStr) return ele;
-      const prefix = "language-";
-      const lang = Array.from(child.classList)
-        .find((className) => className.startsWith(prefix))
-        ?.slice(prefix.length);
-      if (!lang || lang === "null" || lang === "undefined") return ele;
-      const result = await highlight({ code: codeStr, lang });
-      return result || ele;
-    }
-    return ele;
+    return await handleCode(ele);
   });
   return Promise.all(elements);
 };
 
-export function domToVNode(dom: Node): VNode | null | string {
+export type MaybeVNode = VNode | null | string;
+
+export function domToVNode(dom: Node): MaybeVNode {
   if (dom.nodeType === Node.TEXT_NODE) return dom.textContent || null;
   if (!(dom instanceof Element)) return null;
 
