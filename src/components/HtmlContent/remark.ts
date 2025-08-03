@@ -25,17 +25,17 @@ export function splitMarkdown(markdownText: string): string[] {
   });
 }
 
-const handleCode = async (ele: Element) => {
-  if (ele.tagName !== "PRE") return ele;
+const handlePreCode = async (ele: Element) => {
+  if (ele.tagName !== "PRE") return;
   const child = ele.firstElementChild;
-  if (child?.tagName !== "CODE") return ele;
+  if (child?.tagName !== "CODE") return;
   const codeStr = child.textContent?.trim();
-  if (!codeStr) return ele;
+  if (!codeStr) return;
   const prefix = "language-";
   const lang = Array.from(child.classList)
     .find((className) => className.startsWith(prefix))
     ?.slice(prefix.length);
-  if (!lang || lang === "null" || lang === "undefined") return ele;
+  if (!lang || lang === "null" || lang === "undefined") return;
   try {
     const html = await codeToHtml(codeStr, {
       lang,
@@ -43,9 +43,9 @@ const handleCode = async (ele: Element) => {
       defaultColor: "light-dark()",
     });
     const doc = domParser.parseFromString(html, "text/html");
-    return doc.querySelector("pre") || ele;
+    return doc.querySelector("pre") || undefined;
   } catch {
-    return ele;
+    return;
   }
 };
 
@@ -59,10 +59,11 @@ export const markdownToElement = async (markdown: string) => {
     .use(rehypeStringify)
     .process(markdown);
   const doc = domParser.parseFromString(result.toString(), "text/html");
-  const elements = Array.from(doc.body.children).map(async (ele) => {
-    return await handleCode(ele);
-  });
-  return Promise.all(elements);
+  for (const element of doc.querySelectorAll("pre")) {
+    const pre = await handlePreCode(element);
+    if (pre) element.replaceWith(pre);
+  }
+  return Array.from(doc.body.children);
 };
 
 export type MaybeVNode = VNode | null | string;
