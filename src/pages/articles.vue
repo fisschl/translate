@@ -23,7 +23,7 @@ const sendOnPaste = ref(true);
 
 const isSending = ref(false);
 
-const systemMessages = () => {
+const systemMessages = computed(() => {
   return [
     {
       role: "system",
@@ -41,15 +41,11 @@ const systemMessages = () => {
         "# 你好世界\n\n这是一个**粗体**文本，带有*斜体*格式。\n\n- 列表项 1\n- 列表项 2\n\n```javascript\nconsole.log('Hello');\n```",
     },
   ];
-};
+});
 
 const handleFormSubmit = async () => {
   const input = await markdownContent();
   if (!input || isSending.value) return;
-
-  const historyMessages = messages.map((message) => {
-    return pick(message, ["role", "content"]);
-  });
 
   isSending.value = true;
   const userMessage = reactive<ChatMessage>({
@@ -68,8 +64,8 @@ const handleFormSubmit = async () => {
     },
     body: JSON.stringify({
       messages: [
-        ...systemMessages(),
-        ...historyMessages,
+        ...systemMessages.value,
+        ...messages.slice(-3).map((message) => pick(message, ["role", "content"])),
         { role: "user", content: userMessage.content },
       ],
       thinking: { type: "disabled" },
