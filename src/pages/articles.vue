@@ -46,15 +46,13 @@ const systemMessages = computed(() => {
 const handleFormSubmit = async () => {
   const input = await markdownContent();
   if (!input || isSending.value) return;
-
   isSending.value = true;
-  const userMessage = reactive<ChatMessage>({
+  messages.push({
     id: uuid(),
     role: "user",
     content: input,
     status: "success",
   });
-  messages.push(userMessage);
   editor.value?.commands.setContent("");
 
   const { body } = await fetch("/api/doubao/chat", {
@@ -66,7 +64,6 @@ const handleFormSubmit = async () => {
       messages: [
         ...systemMessages.value,
         ...messages.slice(-3).map((message) => pick(message, ["role", "content"])),
-        { role: "user", content: userMessage.content },
       ],
       thinking: { type: "disabled" },
     }),
