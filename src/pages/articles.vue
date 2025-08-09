@@ -66,6 +66,7 @@ const handleFormSubmit = async () => {
         ...messages.slice(-3).map((message) => pick(message, ["role", "content"])),
       ],
       thinking: { type: "disabled" },
+      max_tokens: 16 * 1024,
     }),
   });
 
