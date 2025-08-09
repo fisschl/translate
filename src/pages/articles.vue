@@ -66,7 +66,8 @@ const handleFormSubmit = async () => {
         ...messages.slice(-3).map((message) => pick(message, ["role", "content"])),
       ],
       thinking: { type: "disabled" },
-      max_tokens: 16 * 1024,
+      max_tokens: 32 * 1024,
+      model: "doubao-seed-1.6-250615",
     }),
   });
 
