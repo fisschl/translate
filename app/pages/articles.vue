@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { pick } from "lodash-es";
-import MarkdownContent from "@/components/HtmlContent/MarkdownContent.vue";
-import ScrollBottomButton from "@/components/ScrollBottomButton.vue";
-import { useTiptapEditor } from "@/components/Tiptap/editor";
-import TiptapEditorContent from "@/components/Tiptap/TiptapEditorContent.vue";
-import { useBottomScroll } from "@/utils/scroll";
-import { EventSourceParserStream } from "@/utils/sse";
-import { storage } from "@/utils/storage";
-import { uuid } from "@/utils/uuid";
+import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import ScrollBottomButton from "~/components/ScrollBottomButton.vue";
+import { useTiptapEditor } from "~/components/Tiptap/editor";
+import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
+import { useBottomScroll } from "~/utils/scroll";
+import { EventSourceParserStream } from "~/utils/sse";
+import { storage } from "~/utils/storage";
+import { uuid } from "~/utils/uuid";
 
 const MessageStorageKey = "articles:messages";
 
@@ -55,7 +55,7 @@ const handleFormSubmit = async () => {
   });
   editor.value?.commands.setContent("");
 
-  const { body } = await fetch("/api/doubao/chat", {
+  const { body } = await fetch("https://bronya.world/api/doubao/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -110,23 +110,18 @@ const handleFormSubmit = async () => {
   await storage.setItem(MessageStorageKey, messagesToStore);
 };
 
-storage
-  .getItem<ChatMessage[]>(MessageStorageKey)
-  .then((storedMessages) => {
+const scrollTarget = shallowRef<HTMLElement | null>(null);
+onMounted(async () => {
+  await storage.getItem<ChatMessage[]>(MessageStorageKey).then((storedMessages) => {
     if (!storedMessages) return;
     messages.push(...storedMessages);
-  })
-  .then(async () => {
-    const interval = setInterval(() => scrollToBottom(), 60);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    clearInterval(interval);
   });
-
-const scrollTarget = shallowRef<HTMLElement | null>(null);
-onMounted(() => {
-  const container = document.querySelector("#app");
+  const container = document.querySelector("#__nuxt");
   if (!(container instanceof HTMLElement)) return;
   scrollTarget.value = container;
+  const interval = setInterval(() => scrollToBottom(), 60);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  clearInterval(interval);
 });
 
 const listElement = useTemplateRef("list-element");
@@ -160,9 +155,9 @@ const handleClickScrollToBottom = () => {
 </script>
 
 <template>
-  <TranslateNavigation />
-  <section class="flex flex-col px-6">
-    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-8">
+  <section class="flex flex-col">
+    <TranslateNavigation />
+    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-8 px-6">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
         <template v-if="message.role === 'user'">
           <pre class="text-sm whitespace-pre-wrap" v-text="message.content" />
@@ -177,20 +172,19 @@ const handleClickScrollToBottom = () => {
       class="fixed bottom-10 left-1/2 -translate-x-1/2"
       @click="handleClickScrollToBottom"
     />
-    <section class="pb-4">
+    <section class="px-6 pb-4">
       <TiptapEditorContent :editor="editor" class="mb-3" />
       <div class="flex items-center gap-4">
         <p class="grow" />
-        <ElCheckbox v-model="sendOnPaste" label="在粘贴时发送" />
-        <ElButton
-          type="primary"
-          native-type="button"
+        <UCheckbox v-model="sendOnPaste" label="在粘贴时发送" />
+        <UButton
+          type="submit"
           :loading="isSending"
+          icon="i-lucide-rocket"
           @click="handleFormSubmit"
         >
-          <ILucideRocket class="mr-2 text-base" />
           发送
-        </ElButton>
+        </UButton>
       </div>
     </section>
   </section>

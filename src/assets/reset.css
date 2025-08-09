@@ -1,8 +1,0 @@
-html:root {
-  --el-font-family: var(--font-sans);
-}
-
-#app {
-  height: 100dvh;
-  overflow: auto;
-}

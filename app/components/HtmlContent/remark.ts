@@ -8,10 +8,11 @@ import remarkStringify from "remark-stringify";
 import { codeToHtml } from "shiki";
 import { unified } from "unified";
 import { h, type VNode } from "vue";
+import { once } from "lodash-es";
 import type { Root } from "mdast";
 import "katex/dist/katex.min.css";
 
-export const domParser = new DOMParser();
+export const domParser = once(() => new DOMParser());
 
 export function splitMarkdown(markdownText: string): string[] {
   const processor = unified().use(remarkParse).use(remarkStringify);
@@ -42,7 +43,7 @@ const handlePreCode = async (ele: Element) => {
       themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
       defaultColor: "light-dark()",
     });
-    const doc = domParser.parseFromString(html, "text/html");
+    const doc = domParser().parseFromString(html, "text/html");
     return doc.querySelector("pre") || undefined;
   } catch {
     return;
@@ -58,7 +59,7 @@ export const markdownToElement = async (markdown: string) => {
     .use(rehypeKatex)
     .use(rehypeStringify)
     .process(markdown);
-  const doc = domParser.parseFromString(result.toString(), "text/html");
+  const doc = domParser().parseFromString(result.toString(), "text/html");
   for (const element of doc.querySelectorAll("pre")) {
     const pre = await handlePreCode(element);
     if (pre) element.replaceWith(pre);
