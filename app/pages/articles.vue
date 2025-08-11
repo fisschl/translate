@@ -27,18 +27,43 @@ const systemMessages = computed(() => {
   return [
     {
       role: "system",
-      content:
-        "你是一个翻译助手，你的工作是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：\n\n1. 你提供的译文需要带有格式，包括标题、列表、代码块等。\n2. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释。\n3. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
+      content: [
+        "你是一个翻译助手，你的任务是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：",
+        "",
+        "1. 你提供的译文需要带有格式，包括标题、列表、代码块等。",
+        "2. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释。",
+        "3. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
+      ].join("\n"),
     },
     {
       role: "user",
-      content:
-        "# Hello World\n\nThis is a **bold** text with *italic* formatting.\n\n- List item 1\n- List item 2\n\n```\nconsole.log('Hello');\n```",
+      content: [
+        "# Hello World",
+        "",
+        "This is a **bold** text with *italic* formatting.",
+        "",
+        "- List item 1",
+        "- List item 2",
+        "",
+        "```",
+        "console.log('Hello');",
+        "```",
+      ].join("\n"),
     },
     {
       role: "assistant",
-      content:
-        "# 你好世界\n\n这是一个**粗体**文本，带有*斜体*格式。\n\n- 列表项 1\n- 列表项 2\n\n```javascript\nconsole.log('Hello');\n```",
+      content: [
+        "# 你好世界",
+        "",
+        "这是一个**粗体**文本，带有*斜体*格式。",
+        "",
+        "- 列表项 1",
+        "- 列表项 2",
+        "",
+        "```javascript",
+        "console.log('Hello');",
+        "```",
+      ].join("\n"),
     },
   ];
 });

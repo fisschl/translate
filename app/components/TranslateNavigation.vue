@@ -9,6 +9,12 @@ const menuItems = computed(() => {
       to: "/articles",
       active: route.path.startsWith("/articles"),
     },
+    {
+      label: "变量命名",
+      icon: "i-lucide-code-2",
+      to: "/variable",
+      active: route.path.startsWith("/variable"),
+    },
   ];
 });
 </script>
