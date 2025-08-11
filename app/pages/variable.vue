@@ -136,12 +136,12 @@ const variableNames = computed<string[]>(() => {
 <template>
   <section>
     <TranslateNavigation />
-    <UForm :state="form" class="cc mt-4 mb-4 flex gap-2 px-6" @submit="handleFormSubmit">
+    <UForm :state="form" class="container mt-4 mb-4 flex gap-2 px-6" @submit="handleFormSubmit">
       <UInput
         v-model="form.question"
         :disabled="isSending"
         size="lg"
-        placeholder="请输入含义，AI 将自动生成符合编程规范的变量名。"
+        placeholder="请输入含义，AI 将自动生成符合编程规范的变量名"
         class="flex-1"
       />
       <UButton type="submit" :loading="isSending" size="lg" icon="i-lucide-wand-2">
@@ -149,10 +149,13 @@ const variableNames = computed<string[]>(() => {
       </UButton>
     </UForm>
     <ul class="container px-6">
-      <li v-for="name in variableNames" :key="name" class="group mb-2">
-        <UButton class="flex w-full" size="lg" variant="ghost" color="neutral" @click="copy(name)">
-          <code class="flex-1 font-mono">{{ name }}</code>
-          <ILucideCopy class="ml-2 opacity-0 transition-opacity group-hover:opacity-100" />
+      <li v-for="name in variableNames" :key="name" class="group mb-3 flex">
+        <UButton class="w-full" size="lg" variant="subtle" color="neutral" @click="copy(name)">
+          <code class="flex-1 truncate text-left font-mono">{{ name }}</code>
+          <UIcon
+            name="i-lucide-copy"
+            class="ml-2 opacity-0 transition-opacity group-hover:opacity-100"
+          />
         </UButton>
       </li>
     </ul>

@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   modules: ["@nuxt/ui", "@nuxt/eslint", "@pinia/nuxt", "@vueuse/nuxt"],
-  css: ["~/assets/css/main.css", "~/assets/MiSans/mi-sans.css", "~/assets/css/reset.css"],
+  css: ["~/assets/css/main.css"],
   ui: { fonts: false },
   devtools: { enabled: true },
   nitro: {
