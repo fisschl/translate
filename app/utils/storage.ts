@@ -1,6 +1,18 @@
-import { createStorage } from "unstorage";
-import indexedDbDriver from "unstorage/drivers/indexedb";
+import { get, set, del } from "idb-keyval";
 
-export const storage = createStorage({
-  driver: indexedDbDriver({ base: "translate" }),
-});
+export const joinGlobalPath = (...keys: string[]) => {
+  return ["translate", ...keys].join(":");
+};
+
+export const storage = {
+  getItem: async (key: string) => {
+    const value = await get(joinGlobalPath(key));
+    return value ?? null;
+  },
+  setItem: async (key: string, value: string) => {
+    await set(joinGlobalPath(key), value);
+  },
+  removeItem: async (key: string) => {
+    await del(joinGlobalPath(key));
+  },
+};

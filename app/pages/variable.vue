@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
+import { storage } from "~/utils/storage";
+import {
+  camelCase,
+  capitalCase,
+  constantCase,
+  dotCase,
+  kebabCase,
+  noCase,
+  pascalCase,
+  pathCase,
+  snakeCase,
+} from "change-case";
+import { pick } from "lodash-es";
 
 const isSending = ref(false);
 
@@ -44,16 +57,65 @@ const systemMessages = computed(() => {
   ];
 });
 
-// 表单状态
-const form = reactive({
-  question: "",
-});
+const form = useStorageAsync("variable:form", { question: "", caseValue: "camelCase" }, storage);
 
-const answer = ref("");
+const answer = useStorageAsync("variable:answer", "", storage);
 const toast = useToast();
 
+const changeCaseOptions: {
+  value: string;
+  label: string;
+  action: (value: string) => string;
+}[] = [
+  {
+    value: "pascalCase",
+    label: "PascalCase",
+    action: pascalCase,
+  },
+  {
+    value: "camelCase",
+    label: "camelCase",
+    action: camelCase,
+  },
+  {
+    value: "kebabCase",
+    label: "kebab-case",
+    action: kebabCase,
+  },
+  {
+    value: "snakeCase",
+    label: "snake_case",
+    action: snakeCase,
+  },
+  {
+    value: "capitalCase",
+    label: "Capital Case",
+    action: capitalCase,
+  },
+  {
+    value: "constantCase",
+    label: "CONSTANT_CASE",
+    action: constantCase,
+  },
+  {
+    value: "dotCase",
+    label: "dot.case",
+    action: dotCase,
+  },
+  {
+    value: "pathCase",
+    label: "path/case",
+    action: pathCase,
+  },
+  {
+    value: "noCase",
+    label: "no case",
+    action: noCase,
+  },
+];
+
 const handleFormSubmit = async () => {
-  const input = form.question.trim();
+  const input = form.value.question.trim();
   if (!input || isSending.value) return;
 
   isSending.value = true;
@@ -129,7 +191,16 @@ whenever(copied, () => {
 
 const variableNames = computed<string[]>(() => {
   if (!answer.value) return [];
-  return answer.value.match(/\b[A-Za-z][A-Za-z0-9]*\b/g) || [];
+  const list = answer.value.match(/\b[A-Za-z][A-Za-z0-9]*\b/g) || [];
+  const { caseValue } = form.value;
+  return list.map((name) => {
+    const caseOption = changeCaseOptions.find((option) => option.value === caseValue);
+    return caseOption?.action(name) ?? name;
+  });
+});
+
+const caseSelectOptions = computed(() => {
+  return changeCaseOptions.map((option) => pick(option, ["value", "label"]));
 });
 </script>
 
@@ -140,18 +211,20 @@ const variableNames = computed<string[]>(() => {
       <UInput
         v-model="form.question"
         :disabled="isSending"
+        autofocus
         size="lg"
         placeholder="请输入含义，AI 将自动生成符合编程规范的变量名"
         class="flex-1"
       />
+      <USelect v-model="form.caseValue" :items="caseSelectOptions" style="width: 12rem" />
       <UButton type="submit" :loading="isSending" size="lg" icon="i-lucide-wand-2">
         开始生成
       </UButton>
     </UForm>
-    <ul class="container px-6">
-      <li v-for="name in variableNames" :key="name" class="group mb-3 flex">
-        <UButton class="w-full" size="lg" variant="subtle" color="neutral" @click="copy(name)">
-          <code class="flex-1 truncate text-left font-mono">{{ name }}</code>
+    <ul class="container mb-8 px-6">
+      <li v-for="name in variableNames" :key="name" class="group mb-1 flex">
+        <UButton class="w-full" variant="ghost" color="neutral" @click="copy(name)">
+          <code class="flex-1 truncate text-left font-mono text-base font-normal">{{ name }}</code>
           <UIcon
             name="i-lucide-copy"
             class="ml-2 opacity-0 transition-opacity group-hover:opacity-100"

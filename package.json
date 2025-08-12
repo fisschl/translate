@@ -3,27 +3,29 @@
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
-    "build": "nuxt build"
+    "build": "nuxt build",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@fontsource-variable/fira-code": "^5.2.6",
-    "@iconify-json/lucide": "^1.2.61",
-    "@iconify-json/tabler": "^1.2.20",
+    "@iconify-json/lucide": "^1.2.62",
+    "@iconify-json/tabler": "^1.2.22",
     "@nuxt/eslint": "^1.8.0",
     "@nuxt/ui": "^3.3.0",
     "@pinia/nuxt": "^0.11.2",
     "@shikijs/rehype": "^3.9.2",
     "@tailwindcss/typography": "^0.5.16",
-    "@tiptap/extensions": "^3.0.9",
-    "@tiptap/pm": "^3.0.9",
-    "@tiptap/starter-kit": "^3.0.9",
-    "@tiptap/static-renderer": "^3.0.9",
-    "@tiptap/vue-3": "^3.0.9",
+    "@tiptap/extensions": "^3.1.0",
+    "@tiptap/pm": "^3.1.0",
+    "@tiptap/starter-kit": "^3.1.0",
+    "@tiptap/static-renderer": "^3.1.0",
+    "@tiptap/vue-3": "^3.1.0",
     "@vue/shared": "^3.5.18",
     "@vueuse/core": "^13.6.0",
     "@vueuse/integrations": "^13.6.0",
     "@vueuse/nuxt": "^13.6.0",
     "@vueuse/router": "^13.6.0",
+    "change-case": "^5.4.4",
     "idb-keyval": "^6.2.2",
     "katex": "^0.16.22",
     "lodash-es": "^4.17.21",
@@ -43,10 +45,9 @@
     "shiki": "^3.9.2",
     "tailwindcss": "^4.1.11",
     "unified": "^11.0.5",
-    "unstorage": "^1.16.1",
     "uuid": "^11.1.0",
     "vue": "^3.5.18",
-    "zod": "^4.0.16"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@prettier/plugin-oxc": "^0.0.4",
@@ -55,13 +56,13 @@
     "@types/node": "^24.2.1",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-oxlint": "^1.11.0",
+    "eslint-plugin-oxlint": "^1.11.2",
     "eslint-plugin-prettier": "^5.5.4",
     "jiti": "^2.5.1",
-    "oxlint": "^1.11.0",
+    "oxlint": "^1.11.2",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
-    "tsx": "^4.20.3",
+    "tsx": "^4.20.4",
     "typescript": "^5.9.2"
   }
 }

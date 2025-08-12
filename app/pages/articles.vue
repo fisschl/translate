@@ -9,16 +9,14 @@ import { EventSourceParserStream } from "~/utils/sse";
 import { storage } from "~/utils/storage";
 import { uuid } from "~/utils/uuid";
 
-const MessageStorageKey = "articles:messages";
-
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-  status: "pending" | "success";
+  status?: "pending";
 }
 
-const messages: ChatMessage[] = reactive([]);
+const messages = useStorageAsync<ChatMessage[]>("articles:messages", [], storage);
 const sendOnPaste = ref(true);
 
 const isSending = ref(false);
@@ -26,26 +24,28 @@ const isSending = ref(false);
 const systemMessages = computed(() => {
   return [
     {
-      role: "system",
+      role: "user",
       content: [
         "你是一个翻译助手，你的任务是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：",
-        "",
-        "1. 你提供的译文需要带有格式，包括标题、列表、代码块等。",
-        "2. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释。",
-        "3. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
+        "1. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释和说明。",
+        "2. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
       ].join("\n"),
     },
+  ];
+});
+
+const prepareMessages = computed(() => {
+  return [
     {
       role: "user",
       content: [
-        "# Hello World",
-        "",
-        "This is a **bold** text with *italic* formatting.",
+        "Hello World, This is a **bold** text with *italic* formatting.",
         "",
         "- List item 1",
         "- List item 2",
         "",
         "```",
+        "// prints 'Hello'",
         "console.log('Hello');",
         "```",
       ].join("\n"),
@@ -53,14 +53,13 @@ const systemMessages = computed(() => {
     {
       role: "assistant",
       content: [
-        "# 你好世界",
-        "",
-        "这是一个**粗体**文本，带有*斜体*格式。",
+        "你好世界, 这是一个**粗体**文本，带有*斜体*格式。",
         "",
         "- 列表项 1",
         "- 列表项 2",
         "",
         "```javascript",
+        "// 打印 'Hello'",
         "console.log('Hello');",
         "```",
       ].join("\n"),
@@ -72,11 +71,10 @@ const handleFormSubmit = async () => {
   const input = await markdownContent();
   if (!input || isSending.value) return;
   isSending.value = true;
-  messages.push({
+  messages.value.push({
     id: uuid(),
     role: "user",
     content: input,
-    status: "success",
   });
   editor.value?.commands.setContent("");
 
@@ -88,7 +86,8 @@ const handleFormSubmit = async () => {
     body: JSON.stringify({
       messages: [
         ...systemMessages.value,
-        ...messages.slice(-3).map((message) => pick(message, ["role", "content"])),
+        ...prepareMessages.value,
+        ...messages.value.slice(-5).map((message) => pick(message, ["role", "content"])),
       ],
       thinking: { type: "disabled" },
       max_tokens: 32 * 1024,
@@ -112,7 +111,7 @@ const handleFormSubmit = async () => {
     content: "",
     status: "pending",
   });
-  messages.push(assistantMessage);
+  messages.value.push(assistantMessage);
 
   const handleContent = (response: Record<string, any>) => {
     const { choices } = response;
@@ -128,19 +127,14 @@ const handleFormSubmit = async () => {
     if (done) break;
     handleContent(value);
   }
-  assistantMessage.status = "success";
+  assistantMessage.status = undefined;
   isSending.value = false;
-  // 存储消息
-  const messagesToStore = messages.slice(-8);
-  await storage.setItem(MessageStorageKey, messagesToStore);
+  if (messages.value.length > 8) messages.value = messages.value.slice(-8);
 };
 
 const scrollTarget = shallowRef<HTMLElement | null>(null);
 onMounted(async () => {
-  await storage.getItem<ChatMessage[]>(MessageStorageKey).then((storedMessages) => {
-    if (!storedMessages) return;
-    messages.push(...storedMessages);
-  });
+  await new Promise((resolve) => setTimeout(resolve, 60));
   const container = document.querySelector("#__nuxt");
   if (!(container instanceof HTMLElement)) return;
   scrollTarget.value = container;
