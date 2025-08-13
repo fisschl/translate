@@ -9,5 +9,4 @@ RUN pnpm run build
 FROM open-source-cn-shanghai.cr.volces.com/open/bun:1.2 AS production
 WORKDIR /app
 COPY --from=builder /app/.output ./.output
-ENV NODE_ENV=production
 CMD ["bun", "run", "./.output/server/index.mjs"]
