@@ -129,7 +129,7 @@ const handleFormSubmit = async () => {
   }
   assistantMessage.status = undefined;
   isSending.value = false;
-  if (messages.value.length > 8) messages.value = messages.value.slice(-8);
+  if (messages.value.length > 16) messages.value = messages.value.slice(-16);
 };
 
 const scrollTarget = shallowRef<HTMLElement | null>(null);
