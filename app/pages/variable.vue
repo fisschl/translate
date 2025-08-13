@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useClipboard } from "@vueuse/core";
 import { storage } from "~/utils/storage";
 import {
   camelCase,
@@ -13,6 +12,7 @@ import {
   snakeCase,
 } from "change-case";
 import { pick } from "lodash-es";
+import VariableButton from "~/components/Variable/VariableButton.vue";
 
 const isSending = ref(false);
 
@@ -179,16 +179,6 @@ const handleFormSubmit = async () => {
   }
 };
 
-const { copy, copied } = useClipboard();
-
-whenever(copied, () => {
-  toast.add({
-    title: "复制成功",
-    description: "已复制变量名到剪贴板",
-    color: "success",
-  });
-});
-
 const variableNames = computed<string[]>(() => {
   if (!answer.value) return [];
   const list = answer.value.match(/\b[A-Za-z][A-Za-z0-9]*\b/g) || [];
@@ -205,32 +195,54 @@ const caseSelectOptions = computed(() => {
 </script>
 
 <template>
-  <section>
+  <div class="page-container">
     <TranslateNavigation />
-    <UForm :state="form" class="container mt-4 mb-4 flex gap-2 px-6" @submit="handleFormSubmit">
-      <UInput
-        v-model="form.question"
-        :disabled="isSending"
-        autofocus
-        size="lg"
-        placeholder="请输入含义，AI 将自动生成符合编程规范的变量名"
-        class="flex-1"
-      />
-      <USelect v-model="form.caseValue" :items="caseSelectOptions" style="width: 12rem" />
-      <UButton type="submit" :loading="isSending" size="lg" icon="i-lucide-wand-2">
-        开始生成
-      </UButton>
-    </UForm>
-    <ul class="container mb-8 px-6">
-      <li v-for="name in variableNames" :key="name" class="group mb-1 flex">
-        <UButton class="w-full" variant="ghost" color="neutral" @click="copy(name)">
-          <code class="flex-1 truncate text-left font-mono text-base font-normal">{{ name }}</code>
-          <UIcon
-            name="i-lucide-copy"
-            class="ml-2 opacity-0 transition-opacity group-hover:opacity-100"
+    <section class="container mt-4 mb-8 flex gap-3 px-6">
+      <aside class="w-max shrink-0">
+        <URadioGroup
+          v-model="form.caseValue"
+          size="lg"
+          class="case-group"
+          :items="caseSelectOptions"
+        >
+          <template #legend>
+            <p class="mb-2">命名风格</p>
+          </template>
+          <template #label="{ item }">
+            <code class="font-mono">{{ item.label }}</code>
+          </template>
+        </URadioGroup>
+      </aside>
+      <main class="flex-1">
+        <UForm :state="form" class="mb-2 flex gap-2" @submit="handleFormSubmit">
+          <UInput
+            v-model="form.question"
+            :disabled="isSending"
+            autofocus
+            size="lg"
+            placeholder="请输入含义，AI 将自动生成符合编程规范的变量名"
+            class="flex-1"
           />
-        </UButton>
-      </li>
-    </ul>
-  </section>
+          <UButton type="submit" :loading="isSending" size="lg" icon="i-lucide-wand-2">
+            开始生成
+          </UButton>
+        </UForm>
+        <ul>
+          <li v-for="name in variableNames" :key="name" class="mb-1 flex">
+            <VariableButton :code-value="name" />
+          </li>
+        </ul>
+      </main>
+    </section>
+  </div>
 </template>
+
+<style scoped>
+.page-container {
+  min-width: 30rem;
+}
+
+.case-group :deep(fieldset.flex > div) {
+  margin-bottom: 0.5rem;
+}
+</style>

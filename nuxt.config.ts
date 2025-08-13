@@ -3,9 +3,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   ui: { fonts: false },
   devtools: { enabled: true },
-  nitro: {
-    preset: "bun",
-  },
+  nitro: { preset: "bun" },
   app: {
     baseURL: "/translate/",
     head: {
