@@ -6,17 +6,20 @@ import {
   type ToolMessage,
 } from "~/components/Assistant/message";
 import ScrollBottomButton from "~/components/ScrollBottomButton.vue";
-import { useTiptapEditor } from "~/components/Tiptap/editor";
+import { html2markdown, useTiptapEditor } from "~/components/Tiptap/editor";
 import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
 import { useBottomScroll } from "~/utils/scroll";
 import { EventSourceParserStream } from "~/utils/sse";
-import { storage } from "~/utils/storage";
+import { useIdb } from "~/utils/storage";
 import { uuid } from "~/utils/uuid";
 import ImageContent from "~/components/Assistant/ImageContent.vue";
 import { last } from "lodash-es";
 
-const messages = useStorageAsync<ChatMessage[]>("coding-assistant:messages", [], storage);
+const messages = useIdb<ChatMessage[]>({
+  key: "translate:coding-assistant:messages",
+  defaultValue: [],
+});
 const isSending = ref(false);
 
 const systemMessages = computed(() => {
@@ -45,7 +48,9 @@ onMounted(async () => {
 });
 
 const handleFormSubmit = async () => {
-  const input = await markdownContent();
+  const htmlInput = editor.value?.getHTML();
+  if (!htmlInput) return;
+  const input = await html2markdown(htmlInput);
   if (!input || isSending.value) return;
   isSending.value = true;
 
@@ -61,7 +66,7 @@ const handleFormSubmit = async () => {
   });
   editor.value?.commands.setContent("");
 
-  const { body } = await fetch("https://bronya.world/api/doubao/chat/completions", {
+  const { body } = await fetch("/translate/api/doubao/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -175,7 +180,7 @@ const isShowScrollToBottom = computed(() => {
   return scrollBottom.value > 30;
 });
 
-const { editor, markdownContent } = useTiptapEditor({
+const editor = useTiptapEditor({
   onEnter: () => {
     handleFormSubmit();
     return true;

@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { EditorContent, type Editor } from "@tiptap/vue-3";
 
-defineProps<{
+const props = defineProps<{
   editor?: Editor;
 }>();
+
+const handleClick = (e: MouseEvent) => {
+  const { target } = e;
+  if (!(target instanceof Element)) return;
+  const tiptap = target.closest(".tiptap");
+  if (tiptap) return;
+  props.editor?.commands.focus();
+};
 </script>
 
 <template>
   <EditorContent
     :editor="editor"
     class="editor-content rounded-md border-gray-300 focus-within:border-blue-500 dark:border-gray-600"
+    @click="handleClick"
   />
 </template>
 

@@ -11,13 +11,13 @@ const menuItems = computed(() => {
     },
     {
       label: "变量命名",
-      icon: "i-lucide-code-2",
+      icon: "i-lucide-apple",
       to: "/variable",
       active: route.path.startsWith("/variable"),
     },
     {
       label: "编程助手",
-      icon: "i-lucide-code",
+      icon: "i-lucide-code-2",
       to: "/coding-assistant",
       active: route.path.startsWith("/coding-assistant"),
     },

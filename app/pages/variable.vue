@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { storage } from "~/utils/storage";
+import { object, string } from "zod/mini";
+import { useIdb } from "~/utils/storage";
 import {
   camelCase,
   capitalCase,
@@ -57,9 +58,16 @@ const systemMessages = computed(() => {
   ];
 });
 
-const form = useStorageAsync("variable:form", { question: "", caseValue: "camelCase" }, storage);
+const form = useIdb({
+  key: "translate:variable:form",
+  schema: object({
+    question: string(),
+    caseValue: string(),
+    answer: string(),
+  }),
+  defaultValue: { question: "", caseValue: "camelCase", answer: "" },
+});
 
-const answer = useStorageAsync("variable:answer", "", storage);
 const toast = useToast();
 
 const changeCaseOptions: {
@@ -121,7 +129,7 @@ const handleFormSubmit = async () => {
   isSending.value = true;
 
   try {
-    const { body } = await fetch("https://bronya.world/api/doubao/chat/completions", {
+    const { body } = await fetch("/translate/api/doubao/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -161,7 +169,7 @@ const handleFormSubmit = async () => {
       const { content } = delta;
       if (!content) return;
       assistantMessage.content += content;
-      answer.value = assistantMessage.content;
+      form.value.answer = assistantMessage.content;
     };
 
     while (true) {
@@ -181,8 +189,8 @@ const handleFormSubmit = async () => {
 };
 
 const variableNames = computed<string[]>(() => {
-  if (!answer.value) return [];
-  const list = answer.value.match(/\b[A-Za-z][A-Za-z0-9]*\b/g) || [];
+  if (!form.value.answer) return [];
+  const list = form.value.answer.match(/\b[A-Za-z][A-Za-z0-9]*\b/g) || [];
   const { caseValue } = form.value;
   return list.map((name) => {
     const caseOption = changeCaseOptions.find((option) => option.value === caseValue);

@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import { pick } from "lodash-es";
+import { boolean, object, string } from "zod/mini";
 import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
-import ScrollBottomButton from "~/components/ScrollBottomButton.vue";
-import { useTiptapEditor } from "~/components/Tiptap/editor";
+import { html2markdown, useTiptapEditor } from "~/components/Tiptap/editor";
 import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
-import { useBottomScroll } from "~/utils/scroll";
 import { EventSourceParserStream } from "~/utils/sse";
-import { storage } from "~/utils/storage";
-import { uuid } from "~/utils/uuid";
+import { useIdb } from "~/utils/storage";
 
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
-
-const messages = useStorageAsync<ChatMessage[]>("articles:messages", [], storage);
-const sendOnPaste = ref(true);
-
-const isSending = ref(false);
+const formData = useIdb({
+  key: "translate:articles:form:data",
+  schema: object({
+    input: string(),
+    output: string(),
+    sendOnPaste: boolean(),
+  }),
+  defaultValue: {
+    input: "",
+    output: "",
+    sendOnPaste: true,
+  },
+  onReady(data) {
+    if (data.input) editor.value?.commands.setContent(data.input);
+  },
+});
 
 const systemMessages = computed(() => {
   return [
@@ -66,145 +69,105 @@ const prepareMessages = computed(() => {
   ];
 });
 
+const isSending = ref(false);
+
 const handleFormSubmit = async () => {
-  const input = await markdownContent();
+  const htmlInput = editor.value?.getHTML();
+  if (!htmlInput) return;
+  formData.value.input = htmlInput;
+  const input = await html2markdown(htmlInput);
   if (!input || isSending.value) return;
-  isSending.value = true;
-  messages.value.push({
-    id: uuid(),
-    role: "user",
-    content: input,
-  });
-  editor.value?.commands.setContent("");
-
-  const { body } = await fetch("https://bronya.world/api/doubao/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages: [
-        ...systemMessages.value,
-        ...prepareMessages.value,
-        ...messages.value.slice(-5).map((message) => pick(message, ["role", "content"])),
-      ],
-      thinking: { type: "disabled" },
-      max_tokens: 32 * 1024,
-      model: "doubao-seed-1-6-flash-250715",
-      stream: true,
-    }),
-  });
-
-  if (!body) {
+  try {
+    isSending.value = true;
+    const { body } = await fetch("/translate/api/doubao/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          ...systemMessages.value,
+          ...prepareMessages.value,
+          {
+            role: "user",
+            content: input,
+          },
+        ],
+        thinking: { type: "disabled" },
+        max_tokens: 32 * 1024,
+        model: "doubao-seed-1-6-flash-250715",
+        stream: true,
+      }),
+    });
+    if (!body) return;
+    const reader = body
+      .pipeThrough(new TextDecoderStream())
+      .pipeThrough(new EventSourceParserStream())
+      .getReader();
+    formData.value.output = "";
+    const handleContent = (response: Record<string, any>) => {
+      const { choices } = response;
+      if (!Array.isArray(choices) || choices.length === 0) return;
+      const [{ delta }] = choices;
+      const { content } = delta;
+      if (!content) return;
+      formData.value.output += content;
+    };
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      handleContent(value);
+    }
+  } finally {
     isSending.value = false;
-    return;
   }
-
-  const reader = body
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(new EventSourceParserStream())
-    .getReader();
-
-  const assistantMessage = reactive<ChatMessage>({
-    id: uuid(),
-    role: "assistant",
-    content: "",
-  });
-  messages.value.push(assistantMessage);
-
-  const handleContent = (response: Record<string, any>) => {
-    const { choices } = response;
-    if (!Array.isArray(choices) || choices.length === 0) return;
-    const [{ delta }] = choices;
-    const { content } = delta;
-    if (!content) return;
-    assistantMessage.content += content;
-  };
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    handleContent(value);
-  }
-  isSending.value = false;
-  if (messages.value.length > 16) messages.value = messages.value.slice(-16);
 };
 
-const scrollTarget = shallowRef<HTMLElement | null>(null);
-onMounted(async () => {
-  await new Promise((resolve) => setTimeout(resolve, 60));
-  const container = document.querySelector("#__nuxt");
-  if (!(container instanceof HTMLElement)) return;
-  scrollTarget.value = container;
-  const interval = setInterval(() => scrollToBottom(), 60);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  clearInterval(interval);
-});
-
-const listElement = useTemplateRef("list-element");
-
-const { scrollBottom, scrollToBottom } = useBottomScroll({
-  target: scrollTarget,
-  watchElement: listElement,
-});
-
-const isShowScrollToBottom = computed(() => {
-  return scrollBottom.value > 30;
-});
-
-const { editor, markdownContent } = useTiptapEditor({
+const editor = useTiptapEditor({
   onEnter: () => {
     handleFormSubmit();
     return true;
   },
   onPaste: () => {
-    if (!sendOnPaste.value) return;
+    if (!formData.value.sendOnPaste) return;
     setTimeout(() => handleFormSubmit(), 100);
   },
   autofocus: true,
   placeholder: "请输入内容进行翻译",
 });
-
-const handleClickScrollToBottom = () => {
-  scrollToBottom();
-  editor.value?.commands.focus();
-};
 </script>
 
 <template>
-  <section class="flex flex-col">
+  <section>
     <TranslateNavigation />
-    <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-8 px-6">
-      <li v-for="message in messages" :key="message.id" class="flex flex-col">
-        <template v-if="message.role === 'user'">
-          <pre class="text-sm whitespace-pre-wrap" v-text="message.content" />
-        </template>
-        <template v-else-if="message.role === 'assistant'">
-          <MarkdownContent :markdown="message.content" />
-        </template>
-      </li>
-    </ol>
-    <ScrollBottomButton
-      :is-show="isShowScrollToBottom"
-      class="fixed bottom-10 left-1/2 -translate-x-1/2"
-      @click="handleClickScrollToBottom"
-    />
-    <section class="px-6 pb-4">
-      <TiptapEditorContent :editor="editor" class="mb-3" />
-      <div class="flex items-center gap-4">
-        <p class="grow" />
-        <UCheckbox v-model="sendOnPaste" label="在粘贴时发送" />
-        <UButton
-          type="submit"
-          :loading="isSending"
-          icon="i-lucide-rocket"
-          @click="handleFormSubmit"
-        >
-          发送
-        </UButton>
+    <div class="mb-10 flex px-6 pt-4">
+      <!-- 左侧输入区域 -->
+      <div class="flex-1">
+        <TiptapEditorContent :editor="editor" class="text-editor" />
+        <div class="flex items-center gap-4 pt-3">
+          <p class="grow" />
+          <UCheckbox v-model="formData.sendOnPaste" label="在粘贴时发送" />
+          <UButton
+            type="submit"
+            :loading="isSending"
+            icon="i-lucide-rocket"
+            @click="handleFormSubmit"
+          >
+            发送
+          </UButton>
+        </div>
       </div>
-    </section>
+      <USeparator orientation="vertical" class="mx-3 h-auto" />
+      <!-- 右侧翻译结果区域 -->
+      <div class="flex-1">
+        <MarkdownContent v-if="formData.output" :markdown="formData.output" />
+      </div>
+    </div>
   </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+.text-editor {
+  min-height: calc(100dvh - 10rem);
+}
+</style>

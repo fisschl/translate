@@ -60,20 +60,15 @@ export const useTiptapEditor = (options?: {
     editor.value?.destroy();
   });
 
-  const markdownContent = async () => {
-    const html = editor.value?.getHTML();
-    if (!html) return "";
-    const markdown = await unified()
-      .use(rehypeParse)
-      .use(rehypeRemark)
-      .use(remarkGfm)
-      .use(remarkStringify)
-      .process(html);
-    return markdown.toString().trim();
-  };
+  return editor;
+};
 
-  return {
-    editor,
-    markdownContent,
-  };
+export const html2markdown = async (html: string) => {
+  const markdown = await unified()
+    .use(rehypeParse)
+    .use(rehypeRemark)
+    .use(remarkGfm)
+    .use(remarkStringify)
+    .process(html);
+  return markdown.toString().trim();
 };
