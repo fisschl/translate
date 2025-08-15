@@ -121,7 +121,7 @@ const handleFormSubmit = async () => {
   isSending.value = true;
 
   try {
-    const { body } = await fetch("https://bronya.world/api/doubao/chat", {
+    const { body } = await fetch("https://bronya.world/api/doubao/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +136,8 @@ const handleFormSubmit = async () => {
         ],
         thinking: { type: "disabled" },
         max_tokens: 8 * 1024,
-        model: "doubao-seed-1.6-250615",
+        model: "doubao-seed-1-6-250615",
+        stream: true,
       }),
     });
 

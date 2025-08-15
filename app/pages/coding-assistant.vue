@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pick } from "lodash-es";
-import MarkdownContent from "~/components/HtmlContent/MarkdownContent.vue";
+import { context7Client, listToolsParam, type ChatMessage } from "~/components/Assistant/message";
 import ScrollBottomButton from "~/components/ScrollBottomButton.vue";
 import { useTiptapEditor } from "~/components/Tiptap/editor";
 import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
@@ -9,15 +9,7 @@ import { EventSourceParserStream } from "~/utils/sse";
 import { storage } from "~/utils/storage";
 import { uuid } from "~/utils/uuid";
 
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
-
-const messages = useStorageAsync<ChatMessage[]>("articles:messages", [], storage);
-const sendOnPaste = ref(true);
-
+const messages = useStorageAsync<ChatMessage[]>("coding-assistant:messages", [], storage);
 const isSending = ref(false);
 
 const systemMessages = computed(() => {
@@ -25,42 +17,9 @@ const systemMessages = computed(() => {
     {
       role: "user",
       content: [
-        "你是一个翻译助手，你的任务是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：",
-        "1. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释和说明。",
-        "2. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
-      ].join("\n"),
-    },
-  ];
-});
-
-const prepareMessages = computed(() => {
-  return [
-    {
-      role: "user",
-      content: [
-        "Hello World, This is a **bold** text with *italic* formatting.",
-        "",
-        "- List item 1",
-        "- List item 2",
-        "",
-        "```",
-        "// prints 'Hello'",
-        "console.log('Hello');",
-        "```",
-      ].join("\n"),
-    },
-    {
-      role: "assistant",
-      content: [
-        "你好世界, 这是一个**粗体**文本，带有*斜体*格式。",
-        "",
-        "- 列表项 1",
-        "- 列表项 2",
-        "",
-        "```javascript",
-        "// 打印 'Hello'",
-        "console.log('Hello');",
-        "```",
+        "你是一个编程助手，你的任务是解答用户的问题，并帮助用户完成编程任务。",
+        "你具有调用工具的能力，请根据用户的需求选择合适的工具。",
+        "仔细揣摩用户意图，在思考过程之后，提供逻辑清晰且内容完整的回答。",
       ].join("\n"),
     },
   ];
@@ -85,12 +44,11 @@ const handleFormSubmit = async () => {
     body: JSON.stringify({
       messages: [
         ...systemMessages.value,
-        ...prepareMessages.value,
         ...messages.value.slice(-5).map((message) => pick(message, ["role", "content"])),
       ],
-      thinking: { type: "disabled" },
-      max_tokens: 32 * 1024,
-      model: "doubao-seed-1-6-250615",
+      max_tokens: 16 * 1024,
+      model: "doubao-seed-1-6-thinking-250715",
+      tools: await listToolsParam(context7Client),
       stream: true,
     }),
   });
@@ -109,6 +67,7 @@ const handleFormSubmit = async () => {
     id: uuid(),
     role: "assistant",
     content: "",
+    status: "pending",
   });
   messages.value.push(assistantMessage);
 
@@ -126,6 +85,7 @@ const handleFormSubmit = async () => {
     if (done) break;
     handleContent(value);
   }
+  assistantMessage.status = undefined;
   isSending.value = false;
   if (messages.value.length > 16) messages.value = messages.value.slice(-16);
 };
@@ -157,10 +117,6 @@ const { editor, markdownContent } = useTiptapEditor({
     handleFormSubmit();
     return true;
   },
-  onPaste: () => {
-    if (!sendOnPaste.value) return;
-    setTimeout(() => handleFormSubmit(), 100);
-  },
   autofocus: true,
   placeholder: "请输入内容进行翻译",
 });
@@ -176,12 +132,8 @@ const handleClickScrollToBottom = () => {
     <TranslateNavigation />
     <ol ref="list-element" class="my-6 flex flex-1 flex-col gap-8 px-6">
       <li v-for="message in messages" :key="message.id" class="flex flex-col">
-        <template v-if="message.role === 'user'">
-          <pre class="text-sm whitespace-pre-wrap" v-text="message.content" />
-        </template>
-        <template v-else-if="message.role === 'assistant'">
-          <MarkdownContent :markdown="message.content" />
-        </template>
+        <template v-if="message.role === 'user'"> </template>
+        <template v-else-if="message.role === 'assistant'"> </template>
       </li>
     </ol>
     <ScrollBottomButton
@@ -193,7 +145,6 @@ const handleClickScrollToBottom = () => {
       <TiptapEditorContent :editor="editor" class="mb-3" />
       <div class="flex items-center gap-4">
         <p class="grow" />
-        <UCheckbox v-model="sendOnPaste" label="在粘贴时发送" />
         <UButton
           type="submit"
           :loading="isSending"

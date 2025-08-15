@@ -15,6 +15,12 @@ const menuItems = computed(() => {
       to: "/variable",
       active: route.path.startsWith("/variable"),
     },
+    {
+      label: "编程助手",
+      icon: "i-lucide-code",
+      to: "/coding-assistant",
+      active: route.path.startsWith("/coding-assistant"),
+    },
   ];
 });
 </script>
