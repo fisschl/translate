@@ -90,7 +90,7 @@ const handleFormSubmit = async () => {
       ],
       thinking: { type: "disabled" },
       max_tokens: 32 * 1024,
-      model: "doubao-seed-1-6-250615",
+      model: "doubao-seed-1-6-flash-250715",
       stream: true,
     }),
   });

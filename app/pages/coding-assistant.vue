@@ -46,7 +46,7 @@ const handleFormSubmit = async () => {
         ...systemMessages.value,
         ...messages.value.slice(-5).map((message) => pick(message, ["role", "content"])),
       ],
-      max_tokens: 16 * 1024,
+      max_tokens: 32 * 1024,
       model: "doubao-seed-1-6-thinking-250715",
       tools: await listToolsParam(context7Client),
       stream: true,
