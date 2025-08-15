@@ -20,6 +20,7 @@ const menuItems = computed(() => {
       icon: "i-lucide-code-2",
       to: "/coding-assistant",
       active: route.path.startsWith("/coding-assistant"),
+      disabled: true,
     },
   ];
 });
