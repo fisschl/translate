@@ -1,11 +1,10 @@
-FROM open-source-cn-shanghai.cr.volces.com/open/node:24 AS base
+FROM open-source-cn-shanghai.cr.volces.com/open/bun:1.2 AS base
 WORKDIR /app
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod --frozen-lockfile --registry=https://registry.npmmirror.com
+COPY package.json bun.lock ./
+RUN bun install --production --frozen-lockfile --registry=https://registry.npmmirror.com
 FROM base AS builder
 COPY . .
-RUN pnpm run build
+RUN bun run build
 FROM open-source-cn-shanghai.cr.volces.com/open/bun:1.2 AS production
 WORKDIR /app
 COPY --from=builder /app/.output ./.output

@@ -9,6 +9,7 @@ export const useIdb = <T extends object>(options: {
   onReady?: (data: T) => void;
 }) => {
   const data = ref<T>(options.defaultValue);
+
   const setData = debounce(async () => {
     const idb = await import("./idb").then(({ idb }) => idb);
     if (!data.value) {
@@ -32,8 +33,9 @@ export const useIdb = <T extends object>(options: {
     } catch (error) {
       console.error(error);
     } finally {
-      options.onReady?.(data.value);
+      if (options.onReady) options.onReady(data.value);
     }
   });
+
   return data;
 };

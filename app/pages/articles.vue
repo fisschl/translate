@@ -12,62 +12,32 @@ const formData = useIdb({
     input: string(),
     output: string(),
     sendOnPaste: boolean(),
+    targetLang: string(),
+    model: string(),
   }),
   defaultValue: {
     input: "",
     output: "",
     sendOnPaste: true,
+    targetLang: "Chinese",
+    model: "qwen-mt-turbo",
   },
   onReady(data) {
     if (data.input) editor.value?.commands.setContent(data.input);
   },
 });
 
-const systemMessages = computed(() => {
-  return [
-    {
-      role: "user",
-      content: [
-        "你是一个翻译助手，你的任务是将用户输入的内容翻译成中文。你需要遵守以下翻译细则：",
-        "1. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释和说明。",
-        "2. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
-      ].join("\n"),
-    },
-  ];
-});
+const targetLangs = [
+  { label: "简体中文", value: "Chinese" },
+  { label: "English", value: "English" },
+  { label: "日本語", value: "Japanese" },
+  { label: "Русский", value: "Russian" },
+];
 
-const prepareMessages = computed(() => {
-  return [
-    {
-      role: "user",
-      content: [
-        "Hello World, This is a **bold** text with *italic* formatting.",
-        "",
-        "- List item 1",
-        "- List item 2",
-        "",
-        "```",
-        "// prints 'Hello'",
-        "console.log('Hello');",
-        "```",
-      ].join("\n"),
-    },
-    {
-      role: "assistant",
-      content: [
-        "你好世界, 这是一个**粗体**文本，带有*斜体*格式。",
-        "",
-        "- 列表项 1",
-        "- 列表项 2",
-        "",
-        "```javascript",
-        "// 打印 'Hello'",
-        "console.log('Hello');",
-        "```",
-      ].join("\n"),
-    },
-  ];
-});
+const models = [
+  { label: "Qwen-MT-Turbo", value: "qwen-mt-turbo" },
+  { label: "Qwen-MT-Plus", value: "qwen-mt-plus" },
+];
 
 const isSending = ref(false);
 
@@ -79,23 +49,18 @@ const handleFormSubmit = async () => {
   if (!input || isSending.value) return;
   try {
     isSending.value = true;
-    const { body } = await fetch("/translate/api/doubao/chat/completions", {
+    const { body } = await fetch("/translate/api/dashscope/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messages: [
-          ...systemMessages.value,
-          ...prepareMessages.value,
-          {
-            role: "user",
-            content: input,
-          },
-        ],
-        thinking: { type: "disabled" },
-        max_tokens: 32 * 1024,
-        model: "doubao-seed-1-6-flash-250715",
+        model: formData.value.model,
+        messages: [{ role: "user", content: input }],
+        translation_options: {
+          source_lang: "auto",
+          target_lang: formData.value.targetLang,
+        },
         stream: true,
       }),
     });
@@ -111,7 +76,7 @@ const handleFormSubmit = async () => {
       const [{ delta }] = choices;
       const { content } = delta;
       if (!content) return;
-      formData.value.output += content;
+      formData.value.output = content;
     };
     while (true) {
       const { done, value } = await reader.read();
@@ -135,6 +100,10 @@ const editor = useTiptapEditor({
   autofocus: true,
   placeholder: "请输入内容进行翻译",
 });
+
+const handleLanguageOrModelChange = () => {
+  if (formData.value.input && !isSending.value) handleFormSubmit();
+};
 </script>
 
 <template>
@@ -145,8 +114,24 @@ const editor = useTiptapEditor({
       <div class="flex-1">
         <TiptapEditorContent :editor="editor" class="text-editor" />
         <div class="flex items-center gap-4 pt-3">
+          <!-- 模型选择 -->
+          <USelect
+            v-model="formData.model"
+            :items="models"
+            placeholder="选择模型"
+            class="w-40"
+            @change="handleLanguageOrModelChange"
+          />
+          <!-- 目标语言选择 -->
+          <USelect
+            v-model="formData.targetLang"
+            :items="targetLangs"
+            placeholder="选择目标语言"
+            class="w-30"
+            @change="handleLanguageOrModelChange"
+          />
           <p class="grow" />
-          <UCheckbox v-model="formData.sendOnPaste" label="在粘贴时发送" />
+          <USwitch v-model="formData.sendOnPaste" label="在粘贴时发送" />
           <UButton
             type="submit"
             :loading="isSending"
