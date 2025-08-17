@@ -18,6 +18,7 @@ const formData = useIdb({
     sendOnPaste: boolean(),
     targetLang: string(),
     model: string(),
+    domain: string(),
   }),
   defaultValue: {
     input: "",
@@ -25,6 +26,7 @@ const formData = useIdb({
     sendOnPaste: true,
     targetLang: "Chinese",
     model: "qwen-mt-turbo",
+    domain: "编程",
   },
   onReady(data) {
     if (data.input) editor.value?.commands.setContent(data.input);
@@ -43,7 +45,16 @@ const models = [
   { label: "Qwen-MT-Plus", value: "qwen-mt-plus" },
 ];
 
+const domains = ["编程", "通用"];
+
 const isSending = ref(false);
+
+const domainsTextOptions = new Map([
+  [
+    "编程",
+    "The text may be in Markdown, possibly with code blocks enclosed by ```. For code blocks without specified language, auto-detect and add the language name after ```. Preserve original Markdown structure and formatting. Use technical terminology for programming contexts.",
+  ],
+]);
 
 const handleFormSubmit = async () => {
   const htmlInput = editor.value?.getHTML();
@@ -64,6 +75,7 @@ const handleFormSubmit = async () => {
         translation_options: {
           source_lang: "auto",
           target_lang: formData.value.targetLang,
+          domains: domainsTextOptions.get(formData.value.domain) || undefined,
         },
         stream: true,
       }),
@@ -104,10 +116,6 @@ const editor = useTiptapEditor({
   autofocus: true,
   placeholder: "请输入内容进行翻译",
 });
-
-const handleLanguageOrModelChange = () => {
-  if (formData.value.input && !isSending.value) handleFormSubmit();
-};
 </script>
 
 <template>
@@ -124,7 +132,7 @@ const handleLanguageOrModelChange = () => {
             :items="models"
             placeholder="选择模型"
             class="w-40"
-            @change="handleLanguageOrModelChange"
+            @change="handleFormSubmit"
           />
           <!-- 目标语言选择 -->
           <USelect
@@ -132,7 +140,15 @@ const handleLanguageOrModelChange = () => {
             :items="targetLangs"
             placeholder="选择目标语言"
             class="w-30"
-            @change="handleLanguageOrModelChange"
+            @change="handleFormSubmit"
+          />
+          <!-- 领域选择 -->
+          <USelect
+            v-model="formData.domain"
+            :items="domains"
+            placeholder="选择领域"
+            class="w-30"
+            @change="handleFormSubmit"
           />
           <p class="grow" />
           <USwitch v-model="formData.sendOnPaste" label="在粘贴时发送" />
