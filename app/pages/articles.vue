@@ -6,6 +6,10 @@ import TiptapEditorContent from "~/components/Tiptap/TiptapEditorContent.vue";
 import { EventSourceParserStream } from "~/utils/sse";
 import { useIdb } from "~/utils/storage";
 
+useHead({
+  title: "翻译文章",
+});
+
 const formData = useIdb({
   key: "translate:articles:form:data",
   schema: object({

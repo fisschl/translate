@@ -15,6 +15,10 @@ import {
 import { pick } from "lodash-es";
 import VariableButton from "~/components/Variable/VariableButton.vue";
 
+useHead({
+  title: "变量名生成",
+});
+
 const isSending = ref(false);
 
 const systemMessages = computed(() => {
@@ -23,12 +27,8 @@ const systemMessages = computed(() => {
       role: "system",
       content: [
         "你是一个专业的编程助手，专门负责根据用户提供的词汇或短语生成符合编程规范的变量名。请严格遵守以下规则：",
-        "1. 变量名必须符合 CamelCase 命名规范（首字母小写，后续单词首字母大写）",
-        "2. 变量名应该简洁明了，易于理解和记忆",
-        "3. 变量名应该具有描述性，能够清楚表达其用途和含义",
-        "4. 避免使用过于冗长的名称，保持适中的长度",
-        "5. 请根据用户提供的词汇或短语，生成 3-5 个不同的变量名选项。各个选项之间用 `,` 分隔。",
-        "6. 只返回变量名，不要添加任何解释或额外文字。",
+        "1. 请根据用户提供的词汇或短语，生成 3-5 个不同的变量名选项。各个选项之间用 `,` 分隔。",
+        "2. 变量名必须符合 CamelCase 命名规范。",
       ].join("\n"),
     },
     {
@@ -129,7 +129,7 @@ const handleFormSubmit = async () => {
   isSending.value = true;
 
   try {
-    const { body } = await fetch("/translate/api/doubao/chat/completions", {
+    const { body } = await fetch("/translate/api/dashscope/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -142,9 +142,8 @@ const handleFormSubmit = async () => {
             content: input,
           },
         ],
-        thinking: { type: "disabled" },
-        max_tokens: 8 * 1024,
-        model: "doubao-seed-1-6-flash-250715",
+        max_tokens: 4 * 1024,
+        model: "qwen-turbo",
         stream: true,
       }),
     });
@@ -222,6 +221,7 @@ const caseSelectOptions = computed(() => {
           </template>
         </URadioGroup>
       </aside>
+      <USeparator orientation="vertical" class="mx-2 h-auto" />
       <main class="flex-1">
         <UForm :state="form" class="mb-2 flex gap-2" @submit="handleFormSubmit">
           <UInput
