@@ -39,8 +39,8 @@ const targetLangs = [
 ];
 
 const models = [
-  { label: "Qwen-MT-Turbo", value: "qwen-mt-turbo" },
-  { label: "Qwen-MT-Plus", value: "qwen-mt-plus" },
+  { label: "Qwen MT Turbo", value: "qwen-mt-turbo" },
+  { label: "Qwen MT Plus", value: "qwen-mt-plus" },
 ];
 
 const isSending = ref(false);

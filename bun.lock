@@ -53,10 +53,11 @@
         "@types/node": "^24.3.0",
         "eslint": "^9.33.0",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-oxlint": "^1.11.2",
+        "eslint-plugin-oxlint": "^1.12.0",
         "eslint-plugin-prettier": "^5.5.4",
         "jiti": "^2.5.1",
-        "oxlint": "^1.11.2",
+        "oxlint": "^1.12.0",
+        "oxlint-tsgolint": "^0.0.4",
         "prettier": "^3.6.2",
         "prettier-plugin-tailwindcss": "^0.6.14",
         "tsx": "^4.20.4",
@@ -433,17 +434,17 @@
 
     "@oxc-transform/binding-win32-x64-msvc": ["@oxc-transform/binding-win32-x64-msvc@0.80.0", "https://registry.npmmirror.com/@oxc-transform/binding-win32-x64-msvc/-/binding-win32-x64-msvc-0.80.0.tgz", { "os": "win32", "cpu": "x64" }, "sha512-MT6hQo9Kw/VuQUfX0fc0OpUdZesQruT0UNY9hxIcqcli7pbxMrvFBjkXo7oUb2151s/n+F4fyQOWvaR6zwxtDA=="],
 
-    "@oxlint-tsgolint/darwin-arm64": ["@oxlint-tsgolint/darwin-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-arm64/-/darwin-arm64-0.0.3.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-F0pPPGOZmZw+iC0Bu7iAAaDdRU995LvfzWMlZyqbNeDeQahsKbbo+lTWNQEgQ3Q1c9f3SWwS3zXch25vW3LLDQ=="],
+    "@oxlint-tsgolint/darwin-arm64": ["@oxlint-tsgolint/darwin-arm64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-arm64/-/darwin-arm64-0.0.4.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-qL0zqIYdYrXl6ghTIHnhJkvyYy1eKz0P8YIEp59MjY3/zNiyk/gtyp8LkwZdqb9ezbcX9UDQhSuSO1wURJsq8g=="],
 
-    "@oxlint-tsgolint/darwin-x64": ["@oxlint-tsgolint/darwin-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-x64/-/darwin-x64-0.0.3.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-JkLm9N4cWcp54vUG7wgrwpPauYTIya4ZszrBWsgmKgvOCHM3hRXXdDdTeoLbHRiFUDUoKpJ/WOhHjDDfLCxo/g=="],
+    "@oxlint-tsgolint/darwin-x64": ["@oxlint-tsgolint/darwin-x64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-x64/-/darwin-x64-0.0.4.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-c3nSjqmDSKzemChAEUv/zy2e9cwgkkO/7rz4Y447+8pSbeZNHi3RrNpVHdrKL/Qep4pt6nFZE+6PoczZxHNQjg=="],
 
-    "@oxlint-tsgolint/linux-arm64": ["@oxlint-tsgolint/linux-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-arm64/-/linux-arm64-0.0.3.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-HWJd1pJzh2MjrZT1yOPDb8itBbIIch7+UVwkPER0bZxULkJXROCd+lAO07SlSJ0S73C7ERWIQNg8p0D+V2sfyA=="],
+    "@oxlint-tsgolint/linux-arm64": ["@oxlint-tsgolint/linux-arm64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-arm64/-/linux-arm64-0.0.4.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-P2BA54c/Ej5AGkChH1/7zMd6PwZfa+jnw8juB/JWops+BX+lbhbbBHz0cYduDBgWYjRo4e3OVJOTskqcpuMfNw=="],
 
-    "@oxlint-tsgolint/linux-x64": ["@oxlint-tsgolint/linux-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-x64/-/linux-x64-0.0.3.tgz", { "os": "linux", "cpu": "x64" }, "sha512-HclgUX/Jw8eguZYs1IarPTdV/30XN7qSSL5wKPOq8wDQWAtZOGqbtFlc5B2V6Gbfz/CxJVv8NAnjdW2bKPzjdw=="],
+    "@oxlint-tsgolint/linux-x64": ["@oxlint-tsgolint/linux-x64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-x64/-/linux-x64-0.0.4.tgz", { "os": "linux", "cpu": "x64" }, "sha512-hbgLpnDNicPrbHOAQ9nNfLOSrUrdWANP/umR7P/cwCc1sv66eEs7bm4G3mrhRU8aXFBJmbhdNqiDSUkYYvHWJQ=="],
 
-    "@oxlint-tsgolint/win32-arm64": ["@oxlint-tsgolint/win32-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-arm64/-/win32-arm64-0.0.3.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-rV5JZf1Oi+/9pbGBUGeaXrrQDAnXrVy0/6ltMpTh1clZAPsO/LJjRTQFPhTZils+fSqx2R0ZF2+L3wF/JwZ0Xg=="],
+    "@oxlint-tsgolint/win32-arm64": ["@oxlint-tsgolint/win32-arm64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-arm64/-/win32-arm64-0.0.4.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-ozKEppmwZhC5LMedClBEat6cXgBGUvxGOgsKK2ZZNE6zSScX7QbvJAOt3nWMGs8GQshHy/6ndMB33+uRloglQA=="],
 
-    "@oxlint-tsgolint/win32-x64": ["@oxlint-tsgolint/win32-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-x64/-/win32-x64-0.0.3.tgz", { "os": "win32", "cpu": "x64" }, "sha512-ixSlc7YeC7r4U7Axbnva1XHpITBRpZWRuzpTuggwtF9WApurXbpNrSiXQ3Jyi60XrbHt2ZCr4znfdSXKsEAy/A=="],
+    "@oxlint-tsgolint/win32-x64": ["@oxlint-tsgolint/win32-x64@0.0.4", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-x64/-/win32-x64-0.0.4.tgz", { "os": "win32", "cpu": "x64" }, "sha512-gLfx+qogW21QcaRKFg6ARgra7tSPqyn+Ems3FgTUyxV4OpJYn7KsQroygxOWElqv6JUobtvHBrxdB6YhlvERbQ=="],
 
     "@oxlint/darwin-arm64": ["@oxlint/darwin-arm64@1.12.0", "https://registry.npmmirror.com/@oxlint/darwin-arm64/-/darwin-arm64-1.12.0.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-Pv+Ho1uq2ny8g2P6JgQpaIUF1FHPL32DfOlZhKqmzDT3PydtFvZp/7zNyJE3BIXeTOOOG1Eg12hjZHMLsWxyNw=="],
 
@@ -1861,7 +1862,7 @@
 
     "oxlint": ["oxlint@1.12.0", "https://registry.npmmirror.com/oxlint/-/oxlint-1.12.0.tgz", { "optionalDependencies": { "@oxlint/darwin-arm64": "1.12.0", "@oxlint/darwin-x64": "1.12.0", "@oxlint/linux-arm64-gnu": "1.12.0", "@oxlint/linux-arm64-musl": "1.12.0", "@oxlint/linux-x64-gnu": "1.12.0", "@oxlint/linux-x64-musl": "1.12.0", "@oxlint/win32-arm64": "1.12.0", "@oxlint/win32-x64": "1.12.0", "oxlint-tsgolint": ">=0.0.1" }, "bin": { "oxlint": "bin/oxlint", "oxc_language_server": "bin/oxc_language_server" } }, "sha512-tBQ9aB00aYLlGXE21WJHnKQAI8xoi2V6Eiz/WvGV7FwU9YLYuNOurEEVbfoS5u0ODX8GLvGWj1fdHh5Rb74Kkw=="],
 
-    "oxlint-tsgolint": ["oxlint-tsgolint@0.0.3", "https://registry.npmmirror.com/oxlint-tsgolint/-/oxlint-tsgolint-0.0.3.tgz", { "optionalDependencies": { "@oxlint-tsgolint/darwin-arm64": "0.0.3", "@oxlint-tsgolint/darwin-x64": "0.0.3", "@oxlint-tsgolint/linux-arm64": "0.0.3", "@oxlint-tsgolint/linux-x64": "0.0.3", "@oxlint-tsgolint/win32-arm64": "0.0.3", "@oxlint-tsgolint/win32-x64": "0.0.3" }, "bin": { "tsgolint": "bin/tsgolint.js" } }, "sha512-t0KME67AKGMR+VXXnTSvp6mSX6u9RiOVgFwDrEevT74kyaRG9v/ZLYNUsy1gY82gc/8uuYwD30i/o16qR5+Fkw=="],
+    "oxlint-tsgolint": ["oxlint-tsgolint@0.0.4", "https://registry.npmmirror.com/oxlint-tsgolint/-/oxlint-tsgolint-0.0.4.tgz", { "optionalDependencies": { "@oxlint-tsgolint/darwin-arm64": "0.0.4", "@oxlint-tsgolint/darwin-x64": "0.0.4", "@oxlint-tsgolint/linux-arm64": "0.0.4", "@oxlint-tsgolint/linux-x64": "0.0.4", "@oxlint-tsgolint/win32-arm64": "0.0.4", "@oxlint-tsgolint/win32-x64": "0.0.4" }, "bin": { "tsgolint": "bin/tsgolint.js" } }, "sha512-KFWVP+VU3ymgK/Dtuf6iRkqjo+aN42lS1YThY6JWlNi1GQqm7wtio/kAwssqDhm8kP+CVXbgZAtu1wgsK4XeTg=="],
 
     "p-event": ["p-event@6.0.1", "https://registry.npmmirror.com/p-event/-/p-event-6.0.1.tgz", { "dependencies": { "p-timeout": "^6.1.2" } }, "sha512-Q6Bekk5wpzW5qIyUP4gdMEujObYstZl6DMMOSenwBvV0BlE5LkDwkjs5yHbZmdCEq2o4RJx4tE1vwxFVf2FG1w=="],
 
@@ -2707,6 +2708,8 @@
 
     "nuxt/oxc-parser": ["oxc-parser@0.80.0", "https://registry.npmmirror.com/oxc-parser/-/oxc-parser-0.80.0.tgz", { "dependencies": { "@oxc-project/types": "^0.80.0" }, "optionalDependencies": { "@oxc-parser/binding-android-arm64": "0.80.0", "@oxc-parser/binding-darwin-arm64": "0.80.0", "@oxc-parser/binding-darwin-x64": "0.80.0", "@oxc-parser/binding-freebsd-x64": "0.80.0", "@oxc-parser/binding-linux-arm-gnueabihf": "0.80.0", "@oxc-parser/binding-linux-arm-musleabihf": "0.80.0", "@oxc-parser/binding-linux-arm64-gnu": "0.80.0", "@oxc-parser/binding-linux-arm64-musl": "0.80.0", "@oxc-parser/binding-linux-riscv64-gnu": "0.80.0", "@oxc-parser/binding-linux-s390x-gnu": "0.80.0", "@oxc-parser/binding-linux-x64-gnu": "0.80.0", "@oxc-parser/binding-linux-x64-musl": "0.80.0", "@oxc-parser/binding-wasm32-wasi": "0.80.0", "@oxc-parser/binding-win32-arm64-msvc": "0.80.0", "@oxc-parser/binding-win32-x64-msvc": "0.80.0" } }, "sha512-lTEUQs+WBOXPUzMR/tWY4yT9D7xXwnENtRR7Epw/QcuYpV4fRveEA+zq8IGUwyyuWecl8jHrddCCuadw+kZOSA=="],
 
+    "oxlint/oxlint-tsgolint": ["oxlint-tsgolint@0.0.3", "https://registry.npmmirror.com/oxlint-tsgolint/-/oxlint-tsgolint-0.0.3.tgz", { "optionalDependencies": { "@oxlint-tsgolint/darwin-arm64": "0.0.3", "@oxlint-tsgolint/darwin-x64": "0.0.3", "@oxlint-tsgolint/linux-arm64": "0.0.3", "@oxlint-tsgolint/linux-x64": "0.0.3", "@oxlint-tsgolint/win32-arm64": "0.0.3", "@oxlint-tsgolint/win32-x64": "0.0.3" }, "bin": { "tsgolint": "bin/tsgolint.js" } }, "sha512-t0KME67AKGMR+VXXnTSvp6mSX6u9RiOVgFwDrEevT74kyaRG9v/ZLYNUsy1gY82gc/8uuYwD30i/o16qR5+Fkw=="],
+
     "p-locate/p-limit": ["p-limit@3.1.0", "https://registry.npmmirror.com/p-limit/-/p-limit-3.1.0.tgz", { "dependencies": { "yocto-queue": "^0.1.0" } }, "sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ=="],
 
     "parse5/entities": ["entities@6.0.1", "https://registry.npmmirror.com/entities/-/entities-6.0.1.tgz", {}, "sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g=="],
@@ -2936,6 +2939,18 @@
     "nuxt/oxc-parser/@oxc-parser/binding-win32-x64-msvc": ["@oxc-parser/binding-win32-x64-msvc@0.80.0", "https://registry.npmmirror.com/@oxc-parser/binding-win32-x64-msvc/-/binding-win32-x64-msvc-0.80.0.tgz", { "os": "win32", "cpu": "x64" }, "sha512-SSiM0m7jG5yxVf0ivy1rF8OuTJo8ITgp1ccp2aqPZG6Qyl5QiVpf8HI1X5AvPFxts2B4Bv8U3Dip+FobqBkwcw=="],
 
     "nuxt/oxc-parser/@oxc-project/types": ["@oxc-project/types@0.80.0", "https://registry.npmmirror.com/@oxc-project/types/-/types-0.80.0.tgz", {}, "sha512-xxHQm8wfCv2e8EmtaDwpMeAHOWqgQDAYg+BJouLXSQt5oTKu9TIXrgNMGSrM2fLvKmECsRd9uUFAAD+hPyootA=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/darwin-arm64": ["@oxlint-tsgolint/darwin-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-arm64/-/darwin-arm64-0.0.3.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-F0pPPGOZmZw+iC0Bu7iAAaDdRU995LvfzWMlZyqbNeDeQahsKbbo+lTWNQEgQ3Q1c9f3SWwS3zXch25vW3LLDQ=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/darwin-x64": ["@oxlint-tsgolint/darwin-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/darwin-x64/-/darwin-x64-0.0.3.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-JkLm9N4cWcp54vUG7wgrwpPauYTIya4ZszrBWsgmKgvOCHM3hRXXdDdTeoLbHRiFUDUoKpJ/WOhHjDDfLCxo/g=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/linux-arm64": ["@oxlint-tsgolint/linux-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-arm64/-/linux-arm64-0.0.3.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-HWJd1pJzh2MjrZT1yOPDb8itBbIIch7+UVwkPER0bZxULkJXROCd+lAO07SlSJ0S73C7ERWIQNg8p0D+V2sfyA=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/linux-x64": ["@oxlint-tsgolint/linux-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/linux-x64/-/linux-x64-0.0.3.tgz", { "os": "linux", "cpu": "x64" }, "sha512-HclgUX/Jw8eguZYs1IarPTdV/30XN7qSSL5wKPOq8wDQWAtZOGqbtFlc5B2V6Gbfz/CxJVv8NAnjdW2bKPzjdw=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/win32-arm64": ["@oxlint-tsgolint/win32-arm64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-arm64/-/win32-arm64-0.0.3.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-rV5JZf1Oi+/9pbGBUGeaXrrQDAnXrVy0/6ltMpTh1clZAPsO/LJjRTQFPhTZils+fSqx2R0ZF2+L3wF/JwZ0Xg=="],
+
+    "oxlint/oxlint-tsgolint/@oxlint-tsgolint/win32-x64": ["@oxlint-tsgolint/win32-x64@0.0.3", "https://registry.npmmirror.com/@oxlint-tsgolint/win32-x64/-/win32-x64-0.0.3.tgz", { "os": "win32", "cpu": "x64" }, "sha512-ixSlc7YeC7r4U7Axbnva1XHpITBRpZWRuzpTuggwtF9WApurXbpNrSiXQ3Jyi60XrbHt2ZCr4znfdSXKsEAy/A=="],
 
     "p-locate/p-limit/yocto-queue": ["yocto-queue@0.1.0", "https://registry.npmmirror.com/yocto-queue/-/yocto-queue-0.1.0.tgz", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
