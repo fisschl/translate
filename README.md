@@ -9,23 +9,7 @@
 - **编辑器**: Tiptap
 - **样式**: Tailwind CSS
 - **图标**: Lucide Icons
-- **AI 服务**: 豆包大模型 API
-
-## 开发
-
-```bash
-# 安装依赖
-pnpm install
-
-# 启动开发服务器
-pnpm dev
-
-# 构建生产版本
-pnpm build
-
-# 预览生产版本
-pnpm preview
-```
+- **AI 服务**: 阿里云 DashScope 服务（通义千问）
 
 ## 功能特性
 
@@ -52,31 +36,6 @@ pnpm preview
 - **导航系统**: 统一的导航栏，功能间快速切换
 - **通知系统**: Toast 通知提供操作反馈
 
-## 项目结构
-
-```
-├── app/                         # 应用目录 (Nuxt4 新结构)
-│   ├── app.vue                  # 应用入口
-│   ├── pages/                   # 页面
-│   │   ├── articles.vue         # 文本翻译页面
-│   │   └── variable.vue         # 变量命名页面
-│   ├── components/              # 组件
-│   │   ├── HtmlContent/         # Markdown 渲染组件
-│   │   ├── Tiptap/              # 编辑器组件
-│   │   ├── ScrollBottomButton.vue
-│   │   └── TranslateNavigation.vue
-│   ├── utils/                   # 工具函数
-│   │   ├── scroll.ts            # 滚动相关工具
-│   │   ├── sse.ts               # Server-Sent Events 处理
-│   │   ├── storage.ts           # 本地存储工具
-│   │   └── uuid.ts              # UUID 生成工具
-│   └── assets/                  # 静态资源
-│       ├── css/                 # 样式文件
-│       └── MiSans/              # 字体文件
-├── nuxt.config.ts               # Nuxt 配置
-└── package.json                 # 项目依赖
-```
-
 ## 使用说明
 
 ### 文本翻译
@@ -94,15 +53,6 @@ pnpm preview
 3. AI 将生成符合编程规范的变量名
 4. 点击任意变量名或悬停显示复制按钮
 5. 一键复制到剪贴板
-
-## 技术特点
-
-- **现代化架构**: 基于 Nuxt 4 的最新特性
-- **组件化设计**: 高度模块化的组件结构
-- **AI 集成**: 无缝集成豆包大模型 API
-- **实时通信**: 使用 SSE 实现流式响应
-- **本地存储**: 支持消息历史持久化
-- **响应式设计**: 完美适配各种设备
 
 ## 贡献
 
