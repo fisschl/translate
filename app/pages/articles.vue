@@ -39,9 +39,8 @@ const targetLangs = [
       {
         role: "user",
         content: [
-          "你的任务是将用户输入的内容翻译成中文。记住：",
-          "1. 你的翻译需要尽量符合信达雅的准则，不需要添加任何解释和说明。",
-          "2. 对于没有指定编程语言的代码块，你可以根据上下文判断其语言并在译文中正确指定。",
+          "请将用户输入内容准确翻译成中文，保持原文格式。",
+          "若代码块未指定语言，可根据上下文判断并在译文中正确标注。",
         ].join("\n"),
       },
       {
@@ -81,9 +80,8 @@ const targetLangs = [
       {
         role: "user",
         content: [
-          "Your task is to translate the user's input into English. Remember:",
-          "1. Your translation should be as accurate, fluent, and elegant as possible. Do not add any explanations.",
-          "2. For code blocks without a specified programming language, you can determine the language based on context and correctly specify it in the translation.",
+          "Translate the user's input into English accurately, maintaining the original formatting.",
+          "If the code block has no specified language, determine it based on context and label it correctly in the translation.",
         ].join("\n"),
       },
       {
@@ -123,9 +121,8 @@ const targetLangs = [
       {
         role: "user",
         content: [
-          "あなたの任務はユーザーの入力を日本語に翻訳することです。覚えておいてください：",
-          "1. 翻訳はできるだけ正確で、流暢で、優雅でなければなりません。説明は追加しないでください。",
-          "2. プログラミング言語が指定されていないコードブロックについては、コンテキストに基づいて言語を判断し、翻訳で正しく指定することができます。",
+          "ユーザーの入力を正確に日本語に翻訳し、元のフォーマットを維持してください。",
+          "コードブロックに言語が指定されていない場合は、コンテキストに基づいて判断し、翻訳で正しくラベルを付けてください。",
         ].join("\n"),
       },
       {
@@ -165,9 +162,8 @@ const targetLangs = [
       {
         role: "user",
         content: [
-          "Ваша задача — перевести ввод пользователя на русский язык. Помните:",
-          "1. Ваш перевод должен быть как можно более точным, связным и грамотным. Не добавляйте никаких объяснений.",
-          "2. Для блоков кода без указанного языка программирования вы можете определить язык по контексту и правильно указать его в переводе.",
+          "Переведите ввод пользователя на русский язык точно, сохранив исходное форматирование.",
+          "Если для блока кода не указан язык, определите его по контексту и правильно пометьте в переводе.",
         ].join("\n"),
       },
       {
