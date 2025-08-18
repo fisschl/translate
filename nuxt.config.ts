@@ -6,15 +6,6 @@ export default defineNuxtConfig({
   nitro: { preset: "bun" },
   app: {
     baseURL: "/translate/",
-    head: {
-      link: [
-        {
-          rel: "icon",
-          type: "image/svg+xml",
-          href: "/translate/favicon.svg",
-        },
-      ],
-    },
   },
   compatibilityDate: "2025-08-09",
 });
