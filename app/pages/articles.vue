@@ -18,7 +18,6 @@ const formData = useIdb({
     sendOnPaste: boolean(),
     targetLang: string(),
     model: string(),
-    domain: string(),
   }),
   defaultValue: {
     input: "",
@@ -26,7 +25,6 @@ const formData = useIdb({
     sendOnPaste: true,
     targetLang: "Chinese",
     model: "qwen-mt-turbo",
-    domain: "编程",
   },
   onReady(data) {
     if (data.input) editor.value?.commands.setContent(data.input);
@@ -45,16 +43,7 @@ const models = [
   { label: "Qwen-MT-Plus", value: "qwen-mt-plus" },
 ];
 
-const domains = ["编程", "通用"];
-
 const isSending = ref(false);
-
-const domainsTextOptions = new Map([
-  [
-    "编程",
-    "The text may be in Markdown, possibly with code blocks enclosed by ```. For code blocks without specified language, auto-detect and add the language name after ```. Preserve original Markdown structure and formatting. Use technical terminology for programming contexts.",
-  ],
-]);
 
 const handleFormSubmit = async () => {
   const htmlInput = editor.value?.getHTML();
@@ -75,7 +64,6 @@ const handleFormSubmit = async () => {
         translation_options: {
           source_lang: "auto",
           target_lang: formData.value.targetLang,
-          domains: domainsTextOptions.get(formData.value.domain) || undefined,
         },
         stream: true,
       }),
@@ -121,9 +109,9 @@ const editor = useTiptapEditor({
 <template>
   <section>
     <TranslateNavigation />
-    <div class="mb-10 flex px-6 pt-4">
+    <div class="three-column-grid mb-10 px-6 pt-4">
       <!-- 左侧输入区域 -->
-      <div class="flex-1">
+      <div class="min-w-0">
         <TiptapEditorContent :editor="editor" class="text-editor" />
         <div class="flex items-center gap-4 pt-3">
           <!-- 模型选择 -->
@@ -142,14 +130,6 @@ const editor = useTiptapEditor({
             class="w-30"
             @change="handleFormSubmit"
           />
-          <!-- 领域选择 -->
-          <USelect
-            v-model="formData.domain"
-            :items="domains"
-            placeholder="选择领域"
-            class="w-30"
-            @change="handleFormSubmit"
-          />
           <p class="grow" />
           <USwitch v-model="formData.sendOnPaste" label="在粘贴时发送" />
           <UButton
@@ -162,11 +142,9 @@ const editor = useTiptapEditor({
           </UButton>
         </div>
       </div>
-      <USeparator orientation="vertical" class="mx-3 h-auto" />
+      <USeparator orientation="vertical" class="h-auto" />
       <!-- 右侧翻译结果区域 -->
-      <div class="flex-1">
-        <MarkdownContent v-if="formData.output" :markdown="formData.output" />
-      </div>
+      <MarkdownContent v-if="formData.output" :markdown="formData.output" class="min-w-0" />
     </div>
   </section>
 </template>
@@ -174,5 +152,11 @@ const editor = useTiptapEditor({
 <style scoped>
 .text-editor {
   min-height: calc(100dvh - 10rem);
+}
+
+.three-column-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.75rem;
 }
 </style>
