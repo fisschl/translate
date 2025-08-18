@@ -12,6 +12,7 @@
         "@pinia/nuxt": "^0.11.2",
         "@shikijs/rehype": "^3.9.2",
         "@tailwindcss/typography": "^0.5.16",
+        "@tiptap/extension-table": "^3.2.0",
         "@tiptap/extensions": "^3.2.0",
         "@tiptap/pm": "^3.2.0",
         "@tiptap/starter-kit": "^3.2.0",
@@ -680,6 +681,8 @@
     "@tiptap/extension-paragraph": ["@tiptap/extension-paragraph@3.2.0", "https://registry.npmmirror.com/@tiptap/extension-paragraph/-/extension-paragraph-3.2.0.tgz", { "peerDependencies": { "@tiptap/core": "^3.2.0" } }, "sha512-RQ6mu06nVP9xEVULE64oWH9MT92mQhHVwJpnkYQuc7XEe3KgPYVbUmaLWMzJbjBOnAhTBC4k37Wwk0JKiTUBNQ=="],
 
     "@tiptap/extension-strike": ["@tiptap/extension-strike@3.2.0", "https://registry.npmmirror.com/@tiptap/extension-strike/-/extension-strike-3.2.0.tgz", { "peerDependencies": { "@tiptap/core": "^3.2.0" } }, "sha512-gIfaIJmvQNBxjvtJfNQ8LhvWuGEFVFDMJxLa80speY4ngsDYZ3K8Ea4+0FTctKJVIXEZ5cDoHZR96ELkQMPzWA=="],
+
+    "@tiptap/extension-table": ["@tiptap/extension-table@3.2.0", "https://registry.npmmirror.com/@tiptap/extension-table/-/extension-table-3.2.0.tgz", { "peerDependencies": { "@tiptap/core": "^3.2.0", "@tiptap/pm": "^3.2.0" } }, "sha512-dmhy6WvD2FIowOPPOCfWQfj9tvv0Mp1g1jZ7/GOi6bubUKO9W0wU+9c39yr/lCx7REABSxT5oEdk/2vlPPRT0w=="],
 
     "@tiptap/extension-text": ["@tiptap/extension-text@3.2.0", "https://registry.npmmirror.com/@tiptap/extension-text/-/extension-text-3.2.0.tgz", { "peerDependencies": { "@tiptap/core": "^3.2.0" } }, "sha512-VDQPjVr6zd3MGh8+xPIIj+fuIhnws9tpAmP7jvBep+0tL7P2RYpN2NSj0zqeStHPcGfv9iMuXEuuMkEsi5gIZg=="],
 

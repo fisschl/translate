@@ -46,4 +46,8 @@ const handleClick = (e: MouseEvent) => {
   height: 0;
   pointer-events: none;
 }
+
+.editor-content :deep(table p) {
+  margin: 0;
+}
 </style>

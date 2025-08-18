@@ -5,6 +5,7 @@ import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
+import { TableKit } from "@tiptap/extension-table";
 import { unified } from "unified";
 
 export const useTiptapEditor = (options?: {
@@ -29,6 +30,7 @@ export const useTiptapEditor = (options?: {
           };
         },
       }),
+      TableKit,
     ];
     if (options?.placeholder)
       extensions.push(
