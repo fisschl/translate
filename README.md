@@ -9,7 +9,7 @@
 - **编辑器**: Tiptap
 - **样式**: Tailwind CSS
 - **图标**: Lucide Icons
-- **AI 服务**: 阿里云 DashScope 服务（通义千问）
+- **AI 服务**: 阿里云 DashScope 服务（通义）
 
 ## 功能特性
 
