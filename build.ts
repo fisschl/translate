@@ -2,5 +2,6 @@ import { $ } from "bun";
 
 const target = "open-source-cn-shanghai.cr.volces.com/open/translate:latest";
 
-await $`docker build -t ${target} .`;
+// 启用Docker BuildKit缓存
+await $`docker build --build-arg BUILDKIT_INLINE_CACHE=1 -t ${target} .`;
 await $`docker push ${target}`;
