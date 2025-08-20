@@ -1,11 +1,10 @@
 import { debounce } from "lodash-es";
 import { watchIgnorable } from "@vueuse/core";
-import type { ZodMiniType } from "zod/mini";
 
 export const useIdb = <T extends object>(options: {
   key: string;
   defaultValue: T;
-  schema?: ZodMiniType<T>;
+  parse?: (data: unknown) => T | Promise<T>;
   onReady?: (data: T) => void;
 }) => {
   const data = ref<T>(options.defaultValue);
@@ -27,7 +26,7 @@ export const useIdb = <T extends object>(options: {
       const stringValue = await idb.get(options.key);
       if (!stringValue) return;
       const objectValue = JSON.parse(stringValue);
-      const parsedValue = options.schema ? options.schema.parse(objectValue) : objectValue;
+      const parsedValue = options.parse ? await options.parse(objectValue) : objectValue;
       ignoreUpdates(() => (data.value = parsedValue));
       await nextTick();
     } catch (error) {

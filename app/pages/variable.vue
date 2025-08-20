@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { object, string } from "zod/mini";
+import { object, string, type infer as Infer } from "zod/mini";
 import { useIdb } from "~/utils/storage";
 import {
   camelCase,
@@ -58,13 +58,15 @@ const systemMessages = computed(() => {
   ];
 });
 
-const form = useIdb({
+const FormDataZod = object({
+  question: string(),
+  caseValue: string(),
+  answer: string(),
+});
+
+const form = useIdb<Infer<typeof FormDataZod>>({
   key: "translate:variable:form",
-  schema: object({
-    question: string(),
-    caseValue: string(),
-    answer: string(),
-  }),
+  parse: FormDataZod.parse,
   defaultValue: { question: "", caseValue: "camelCase", answer: "" },
 });
 
