@@ -1,37 +1,36 @@
-# AI 助手应用
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-基于 Nuxt 4 + NuxtUI 的智能应用，集成文本翻译和变量命名生成功能。
+## Getting Started
 
-## 核心功能
+First, run the development server:
 
-### 📝 文本翻译
-- 实时翻译（Qwen 大模型）
-- Markdown 格式支持
-- 富文本编辑（Tiptap）
-- 消息历史本地存储
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### 🔤 变量命名
-- AI 智能生成变量名
-- 支持多种命名规范
-- 一键复制功能
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 技术栈
-- **框架**: Nuxt 4 + NuxtUI
-- **编辑器**: Tiptap
-- **样式**: Tailwind CSS
-- **AI 服务**: 阿里云 DashScope
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## 使用说明
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-### 文本翻译
-1. 在编辑器中输入文本（支持 Markdown）
-2. 点击发送或按回车提交
-3. 查看 AI 实时翻译结果
+## Learn More
 
-### 变量命名
-1. 输入中文词汇或短语
-2. 点击"生成变量名"
-3. 点击变量名一键复制
+To learn more about Next.js, take a look at the following resources:
 
-## 许可证
-MIT License
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
