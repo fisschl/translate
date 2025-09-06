@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath: '/translate',
-  assetPrefix: '/translate',
-  trailingSlash: true,
+  basePath: "/translate",
+  typedRoutes: true,
 };
 
 export default nextConfig;
