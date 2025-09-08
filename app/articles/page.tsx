@@ -25,7 +25,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Loader } from "@/components/ai-elements/loader";
 
-export function TranslationPanel() {
+export default function TranslationPanel() {
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState("简体中文");
   const [sendOnPaste, setSendOnPaste] = useState(true);
