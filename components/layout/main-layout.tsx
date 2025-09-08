@@ -11,8 +11,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="flex-1 overflow-hidden bg-background">
-        <div className="flex items-center gap-2 border-b px-4 py-2 lg:hidden">
+      <main className="bg-background flex h-dvh min-h-0 flex-1 flex-col">
+        <div className="flex items-center gap-2 border-b px-3 py-2">
           <SidebarTrigger />
         </div>
         {children}

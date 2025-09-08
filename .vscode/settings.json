@@ -18,5 +18,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "files.autoSave": "onFocusChange",
   "tailwindCSS.classAttributes": ["class", "className", "tw"]
 }
